@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Leitura Fácil</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #F4F1EA;
+      color: #2E2E2E;
+    }
+
+    header {
+      background-color: #A3C9A8;
+      padding: 20px;
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .container {
+      padding: 20px;
+      max-width: 900px;
+      margin: auto;
+    }
+
+    textarea {
+      width: 100%;
+      height: 150px;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      resize: none;
+    }
+
+    .buttons {
+      margin-top: 15px;
+    }
+
+    button {
+      background-color: #6B8E23;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      margin-right: 10px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #5a7a1d;
+    }
+
+    .resultado {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #FFFFFF;
+      border-radius: 10px;
+      line-height: 1.8;
+      letter-spacing: 1px;
+    }
+
+    .config {
+      margin-top: 20px;
+    }
+
+    select {
+      padding: 5px;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  Leitura Fácil 💚
+</header>
+
+<div class="container">
+
+  <h3>Digite ou cole seu texto:</h3>
+
+  <textarea id="texto"></textarea>
+
+  <div class="buttons">
+    <button onclick="adaptarTexto()">Adaptar Texto</button>
+    <button onclick="lerTexto()">🔊 Ouvir</button>
+    <button onclick="PararTexto()">Parar</button>
+  </div>
+
+  <div class="config">
+    <label>Fonte:</label>
+    <select onchange="mudarFonte(this.value)">
+      <option value="Arial">Normal</option>
+      <option value="Verdana">Mais legível</option>
+    </select>
+  </div>
+
+  <div class="resultado" id="resultado">
+    Seu texto adaptado aparecerá aqui...
+  </div>
+
+</div>
+
+<script>
+  function adaptarTexto() {
+    let texto = document.getElementById("texto").value;
+
+    // Simples adaptação: aumenta espaçamento e quebra frases
+    let adaptado = texto.replace(/\./g, ".<br><br>");
+
+    document.getElementById("resultado").innerHTML = adaptado;
+  }
+
+  function lerTexto() {
+  let texto = document.getElementById("resultado").innerText;
+
+  // Cancela qualquer fala anterior antes de começar outra
+  speechSynthesis.cancel();
+
+  let fala = new SpeechSynthesisUtterance(texto);
+  speechSynthesis.speak(fala);
+}
+
+function PararTexto() {
+  // Para imediatamente qualquer fala em andamento
+  speechSynthesis.cancel();
+}
+
+  function mudarFonte(fonte) {
+    document.getElementById("resultado").style.fontFamily = fonte;
+  }
+</script>
+
+</body>
+</html>
