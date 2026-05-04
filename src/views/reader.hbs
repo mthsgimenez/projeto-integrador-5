@@ -1,0 +1,166 @@
+<h3>Texto carregado:</h3>
+
+<div class="controls">
+  <button onclick="adaptarTexto()">Adaptar Texto</button>
+  <button onclick="increaseSpacing()">+ Espaçamento</button>
+  <button onclick="decreaseSpacing()">- Espaçamento</button>
+  <button onclick="lerTexto()">▶️ Ler</button>
+  <button onclick="pause()" id="pause-button">⏸️ Pausar</button>
+  <label for="backgroundColorPicker">Cor de fundo:</label>
+  <input type="color" id="backgroundColorPicker" aria-label="Cor de fundo"
+    onchange="document.querySelector('.resultado').style.setProperty('--background-color', this.value)">
+  <label for="fontColorPicker">Cor da fonte:</label>
+  <input type="color" id="fontColorPicker" aria-label="Cor da fonte"
+    onchange="document.querySelector('.resultado').style.setProperty('--font-color', this.value)">
+</div>
+
+<div class="config">
+  <label>Fonte:</label>
+  <select onchange="mudarFonte(this.value)">
+    <option value="Arial">Normal</option>
+    <option value="Verdana">Mais legível</option>
+  </select>
+</div>
+
+<label>Velocidade:</label>
+<input type="range" min="0.5" max="2" step="0.1" value="1" id="velocidade">
+
+<label>Voz:</label>
+<select id="vozes"></select>
+
+<div class="resultado" id="resultado">
+  {{{textoHtml}}}
+</div>
+
+
+<script>
+  let spacing = 1.6;
+  let dyslexicFont = false;
+  const synth = window.speechSynthesis;
+  let utterance = null;
+
+  function toggleFont() {
+    const output = document.getElementById('resultado');
+    dyslexicFont = !dyslexicFont;
+    output.classList.toggle('dyslexic');
+  }
+
+  function increaseSpacing() {
+    spacing += 0.2;
+    document.getElementById('resultado').style.lineHeight = spacing;
+  }
+
+  function decreaseSpacing() {
+    if (spacing > 1) {
+      spacing -= 0.2;
+      document.getElementById('resultado').style.lineHeight = spacing;
+    }
+  }
+
+  function adaptarTexto() {
+    // se existe textarea (editor) pega dela, senão pega do resultado já renderizado
+    const textoElem = document.getElementById("texto");
+    const texto = textoElem ? textoElem.value : document.getElementById("resultado").innerText;
+    // Simples adaptação: aumenta espaçamento e quebra frases
+    const adaptado = texto.replace(/\./g, ".<br><br>");
+    document.getElementById("resultado").innerHTML = adaptado;
+  }
+
+  function mudarFonte(fonte) {
+    document.getElementById("resultado").style.fontFamily = fonte;
+  }
+
+  function carregarVozes() {
+    let select = document.getElementById("vozes");
+    let vozes = synth.getVoices() || [];
+
+    select.innerHTML = "";
+
+    vozes.forEach((voz, index) => {
+      let option = document.createElement("option");
+      option.value = index;
+      option.textContent = voz.name + " (" + voz.lang + ")";
+      select.appendChild(option);
+    });
+  }
+
+  // Some browsers populate voices asynchronously
+  speechSynthesis.onvoiceschanged = carregarVozes;
+  window.addEventListener('load', () => { carregarVozes(); setTimeout(carregarVozes, 500); });
+
+  function lerTexto() {
+    const text = document.getElementById("resultado").innerText;
+    if (!text) return;
+
+    // Cancela qualquer fala anterior antes de começar outra
+    synth.cancel();
+
+    utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'pt-BR';
+
+    // velocidade
+    let velocidade = document.getElementById("velocidade").value;
+    utterance.rate = velocidade;
+
+    // voz escolhida (safely)
+    let vozes = synth.getVoices() || [];
+    let index = document.getElementById("vozes").value;
+    if (vozes.length && index !== "") {
+      utterance.voice = vozes[index];
+    }
+
+    utterance.onend = () => {
+      document.getElementById("pause-button").textContent = "⏸️ Pausar";
+      utterance = null;
+    };
+    utterance.onerror = () => { utterance = null; };
+
+    synth.speak(utterance);
+    document.getElementById("pause-button").textContent = "⏸️ Pausar";
+  }
+
+  function pause() {
+    // toggle pause/resume and update button label
+    if (synth.speaking && !synth.paused) {
+      synth.pause();
+      document.getElementById("pause-button").textContent = "▶️ Resumir";
+    } else if (synth.paused) {
+      synth.resume();
+      document.getElementById("pause-button").textContent = "⏸️ Pausar";
+    }
+  }
+</script>
+
+<style>
+  .controls {
+    margin: 15px 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .resultado {
+    --background-color: #d6c8bd;
+    --font-color: #2E2E2E;
+    margin-top: 20px;
+    padding: 15px;
+    background-color: var(--background-color);
+    color: var(--font-color);
+    border-radius: 10px;
+    line-height: 1.8;
+    letter-spacing: 1px;
+  }
+
+  .config {
+    margin-top: 20px;
+  }
+
+  select {
+    padding: 5px;
+    border-radius: 5px;
+  }
+
+  .dyslexic {
+    font-family: 'OpenDyslexic', Arial, sans-serif;
+  }
+</style>

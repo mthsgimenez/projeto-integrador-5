@@ -1,0 +1,8 @@
+- [ ] Separar página de carregar texto da página de leitura
+- [ ] Alterar modelagem banco
+- [ ] Opções de cores
+- [ ] Opções de tamanho da fonte
+- [ ] Opções de limitar palavras
+- [ ] Integração API dicionário
+- [ ] Login
+- [ ] Carregar arquivos .epub
