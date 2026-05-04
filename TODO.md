@@ -1,4 +1,4 @@
-- [ ] Separar página de carregar texto da página de leitura
+- [X] Separar página de carregar texto da página de leitura
 - [ ] Alterar modelagem banco
 - [ ] Opções de cores
 - [ ] Opções de tamanho da fonte
