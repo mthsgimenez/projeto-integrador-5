@@ -7,3 +7,4 @@
 - [ ] Login
 - [ ] Carregar arquivos .epub
 - [ ] Melhorar UI/UX
+- [ ] Fix OpenDyslexic não carrega
