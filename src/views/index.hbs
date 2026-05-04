@@ -1,8 +1,20 @@
 <h3>Digite ou cole seu texto:</h3>
-<form method="POST" action="/read">
+<form method="POST" onsubmit="return validar()" action="/read">
     <textarea name="texto" id="texto" required></textarea>
+    <p id="erro" style="color: red;"></p>
     <button type="submit" style="margin-top: 15px;">Abrir para leitura →</button>
 </form>
+
+<script>
+    function validar() {
+        const texto = document.getElementById("texto").value.trim();
+        if (!texto) {
+            document.getElementById("erro").textContent = "Por favor, insira um texto para leitura.";
+            return false;
+        }
+        return true;
+    }
+</script>
 
 <style>
     textarea {
