@@ -5,6 +5,7 @@ const cors = require("cors");
 
 const userRoutes = require("./routes/userRoutes");
 const pagesRoutes = require("./routes/pagesRoutes");
+const dictionaryRoutes = require("./routes/dictionaryRoutes");
 
 const app = express();
 const hbs = exhbs.create({
@@ -24,6 +25,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(express.static(path.join(__dirname, "../public")));
 app.use("/api", userRoutes);
+app.use("/api", dictionaryRoutes);
 app.use("/", pagesRoutes);
 
 module.exports = app;
