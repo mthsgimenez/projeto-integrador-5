@@ -14,12 +14,6 @@ header {
   font-weight: bold;
 }
 
-main {
-  padding: 20px;
-  max-width: 900px;
-  margin: auto;
-}
-
 button {
   background-color: #6B8E23;
   color: white;

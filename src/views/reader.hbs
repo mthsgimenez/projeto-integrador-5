@@ -1,66 +1,74 @@
-<h3>Texto carregado:</h3>
+<div class="main">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <h2>Configurações</h2>
 
-<h4>Espaçamento:</h4>
-<table class="spacing">
-  <tr>
-    <th>Linhas</th>
-    <th>Palavras</th>
-    <th>Letras</th>
-    <th>Tamanho da Fonte</th>
-  </tr>
-  <tr>
-    <td>
-      <button onclick="decreaseLineSpacing()">-</button>
-      <button onclick="increaseLineSpacing()">+</button>
-    </td>
-    <td>
-      <button onclick="decreaseWordSpacing()">-</button>
-      <button onclick="increaseWordSpacing()">+</button>
-    </td>
-    <td>
-      <button onclick="decreaseLetterSpacing()">-</button>
-      <button onclick="increaseLetterSpacing()">+</button>
-    </td>
-    <td>
-      <button onclick="decreaseFontSize()">-</button>
-      <button onclick="increaseFontSize()">+</button>
-    </td>
-  </tr>
-</table>
+    <div class="group">
+      <h4>📏 Espaçamento</h4>
+      <div class="control">
+        <label>Linhas</label>
+        <div>
+          <button onclick="decreaseLineSpacing()">-</button>
+          <button onclick="increaseLineSpacing()">+</button>
+        </div>
+      </div>
 
-<h4>Configurações:</h4>
-<div class="config">
-  <label>Fonte:</label>
-  <select onchange="mudarFonte(this.value)">
-    <option value="Arial">Normal</option>
-    <option value="Verdana">Mais legível</option>
-  </select>
-  <label for="backgroundColorPicker">Cor de fundo:</label>
-  <input type="color" id="backgroundColorPicker" aria-label="Cor de fundo"
-    onchange="document.querySelector('.resultado').style.setProperty('--background-color', this.value)">
-  <label for="fontColorPicker">Cor da fonte:</label>
-  <input type="color" id="fontColorPicker" aria-label="Cor da fonte"
-    onchange="document.querySelector('.resultado').style.setProperty('--font-color', this.value)">
-</div>
+      <div class="control">
+        <label>Palavras</label>
+        <div>
+          <button onclick="decreaseWordSpacing()">-</button>
+          <button onclick="increaseWordSpacing()">+</button>
+        </div>
+      </div>
 
-<h4>Ações:</h4>
-<div class="actions">
-  <button onclick="breakLines()">Quebrar linhas</button>
-  <br>
+      <div class="control">
+        <label>Letras</label>
+        <div>
+          <button onclick="decreaseLetterSpacing()">-</button>
+          <button onclick="increaseLetterSpacing()">+</button>
+        </div>
+      </div>
 
-  <label>Velocidade:</label>
-  <input type="range" min="0.5" max="2" step="0.1" value="1" id="velocidade">
+      <div class="control">
+        <label>Tamanho</label>
+        <div>
+          <button onclick="decreaseFontSize()">-</button>
+          <button onclick="increaseFontSize()">+</button>
+        </div>
+      </div>
+    </div>
 
-  <label>Voz:</label>
-  <select id="vozes"></select>
-  <br>
+    <div class="group">
+      <h4>🎨 Aparência</h4>
+      <select onchange="mudarFonte(this.value)">
+        <option value="Arial">Normal</option>
+        <option value="Verdana">Mais legível</option>
+      </select>
 
-  <button onclick="lerTexto()">▶️ Ler</button>
-  <button onclick="pause()" id="pause-button">⏸️ Pausar</button>
-</div>
+      <input type="color"
+        onchange="document.querySelector('.resultado').style.setProperty('--background-color', this.value)">
+      <input type="color" onchange="document.querySelector('.resultado').style.setProperty('--font-color', this.value)">
+    </div>
 
-<div class="resultado" id="resultado">
-  {{{textoHtml}}}
+    <div class="group">
+      <h4>🔊 Leitura</h4>
+      <input type="range" min="0.5" max="2" step="0.1" value="1" id="velocidade">
+      <select id="vozes"></select>
+
+      <div class="buttons">
+        <button onclick="lerTexto()">▶️</button>
+        <button onclick="pause()" id="pause-button">⏸️</button>
+      </div>
+    </div>
+
+    <div class="group">
+      <button onclick="breakLines()">Quebrar linhas</button>
+    </div>
+  </aside>
+
+  <div class="resultado content" id="resultado">
+    {{{textoHtml}}}
+  </div>
 </div>
 
 
@@ -199,36 +207,76 @@
 </script>
 
 <style>
-  .spacing td {
-    padding: 10px;
+  /* Reset básico */
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
   }
 
-  .spacing button {
-    padding: 6px 12px;
+  /* HEADER FIXO */
+  .header {
+    height: 60px;
+    background: #1e1e1e;
+    color: white;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
   }
 
-  .resultado {
+  /* ÁREA ABAIXO DO HEADER */
+  .main {
+    display: flex;
+    height: calc(100vh - 60px);
+    /* ocupa o resto da tela */
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    width: 260px;
+    background: #2b2b2b;
+    color: white;
+    padding: 20px;
+    overflow-y: auto;
+  }
+
+  /* CONTEÚDO */
+  .content {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
     --background-color: #d6c8bd;
     --font-color: #2E2E2E;
-    margin-top: 20px;
-    padding: 15px;
-    background-color: var(--background-color);
-    color: var(--font-color);
-    border-radius: 10px;
-    line-height: 1.8;
-    letter-spacing: 1px;
+
+    display: flex;
+    justify-content: center;
   }
 
-  .config {
-    margin-top: 20px;
+  /* CONTROLES */
+  .group {
+    margin-bottom: 25px;
   }
 
-  select {
-    padding: 5px;
-    border-radius: 5px;
+  .control {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
   }
 
-  .dyslexic {
-    font-family: 'OpenDyslexic', Arial, sans-serif;
+  button {
+    padding: 6px 10px;
+    border: none;
+    border-radius: 6px;
+    background: #444;
+    color: white;
+    cursor: pointer;
+  }
+
+  button:hover {
+    background: #666;
+  }
+
+  .buttons {
+    display: flex;
+    gap: 10px;
   }
 </style>
