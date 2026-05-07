@@ -7,6 +7,7 @@
       <h4>📏 Espaçamento</h4>
       <div class="control">
         <label>Linhas</label>
+        <label id="lineValue">0</label>
         <div>
           <button onclick="decreaseLineSpacing()">-</button>
           <button onclick="increaseLineSpacing()">+</button>
@@ -15,6 +16,7 @@
 
       <div class="control">
         <label>Palavras</label>
+        <label id="wordValue">0</label>
         <div>
           <button onclick="decreaseWordSpacing()">-</button>
           <button onclick="increaseWordSpacing()">+</button>
@@ -23,6 +25,7 @@
 
       <div class="control">
         <label>Letras</label>
+        <label id="letterValue">0</label>
         <div>
           <button onclick="decreaseLetterSpacing()">-</button>
           <button onclick="increaseLetterSpacing()">+</button>
@@ -31,6 +34,7 @@
 
       <div class="control">
         <label>Tamanho</label>
+        <label id="fontSize">0</label>
         <div>
           <button onclick="decreaseFontSize()">-</button>
           <button onclick="increaseFontSize()">+</button>
@@ -40,24 +44,48 @@
 
     <div class="group">
       <h4>🎨 Aparência</h4>
-      <select onchange="mudarFonte(this.value)">
-        <option value="Arial">Normal</option>
-        <option value="Verdana">Mais legível</option>
-      </select>
 
-      <input type="color"
-        onchange="document.querySelector('.resultado').style.setProperty('--background-color', this.value)">
-      <input type="color" onchange="document.querySelector('.resultado').style.setProperty('--font-color', this.value)">
+      <div class="appearance-control">
+        <label>Fonte</label>
+        <select onchange="mudarFonte(this.value)">
+          <option value="Arial">Normal</option>
+          <option value="Verdana">Mais legível</option>
+        </select>
+      </div>
+
+      <div class="appearance-control">
+        <label>Cor de fundo</label>
+        <input type="color" value="#d6c8bd"
+          onchange="document.getElementById('resultado').style.setProperty('--background-color', this.value)">
+      </div>
+
+      <div class="appearance-control">
+        <label>Cor da fonte</label>
+        <input type="color" value="#2E2E2E"
+          onchange="document.getElementById('resultado').style.setProperty('--font-color', this.value)">
+      </div>
     </div>
 
-    <div class="group">
+    <div class="group reading-group">
       <h4>🔊 Leitura</h4>
-      <input type="range" min="0.5" max="2" step="0.1" value="1" id="velocidade">
-      <select id="vozes"></select>
 
-      <div class="buttons">
-        <button onclick="lerTexto()">▶️</button>
-        <button onclick="pause()" id="pause-button">⏸️</button>
+      <div class="reading-control">
+        <label for="velocidade">Velocidade</label>
+        <input type="range" min="0.5" max="2" step="0.1" value="1" id="velocidade">
+      </div>
+
+      <div class="reading-control">
+        <label for="vozes">Voz</label>
+        <select id="vozes"></select>
+      </div>
+
+      <div class="reading-control">
+        <label>Controles</label>
+
+        <div class="buttons">
+          <button onclick="lerTexto()">▶️</button>
+          <button onclick="pause()" id="pause-button">⏸️</button>
+        </div>
       </div>
     </div>
 
@@ -66,7 +94,7 @@
     </div>
   </aside>
 
-  <div class="resultado content" id="resultado">
+  <div class="content" id="resultado">
     {{{textoHtml}}}
   </div>
 </div>
@@ -90,48 +118,56 @@
   function increaseLineSpacing() {
     lineSpacing += 0.2;
     document.getElementById('resultado').style.lineHeight = lineSpacing;
+    document.getElementById('lineValue').textContent = lineSpacing.toFixed(1);
   }
 
   function decreaseLineSpacing() {
     if (lineSpacing > 1) {
       lineSpacing -= 0.2;
       document.getElementById('resultado').style.lineHeight = lineSpacing;
+      document.getElementById('lineValue').textContent = lineSpacing.toFixed(1);
     }
   }
 
   function increaseWordSpacing() {
     wordSpacing += 0.2;
     document.getElementById('resultado').style.wordSpacing = wordSpacing + 'em';
+    document.getElementById('wordValue').textContent = wordSpacing.toFixed(1);
   }
 
   function decreaseWordSpacing() {
     if (wordSpacing > 0.2) {
       wordSpacing -= 0.2;
       document.getElementById('resultado').style.wordSpacing = wordSpacing + 'em';
+      document.getElementById('wordValue').textContent = wordSpacing.toFixed(1);
     }
   }
 
   function increaseLetterSpacing() {
     letterSpacing += 0.2;
     document.getElementById('resultado').style.letterSpacing = letterSpacing + 'em';
+    document.getElementById('letterValue').textContent = letterSpacing.toFixed(1);
   }
 
   function decreaseLetterSpacing() {
     if (letterSpacing > 0.2) {
       letterSpacing -= 0.2;
       document.getElementById('resultado').style.letterSpacing = letterSpacing + 'em';
+      document.getElementById('letterValue').textContent = letterSpacing.toFixed(1);
     }
   }
 
   function increaseFontSize() {
     fontSize += 0.1;
     document.getElementById('resultado').style.fontSize = fontSize + 'em';
+    document.getElementById('fontSize').textContent = fontSize.toFixed(1) + 'x';
   }
 
   function decreaseFontSize() {
     if (fontSize > 0.5) {
       fontSize -= 0.1;
       document.getElementById('resultado').style.fontSize = fontSize + 'em';
+      document.getElementById('fontSize').textContent = fontSize.toFixed(1) + 'x';
     }
   }
 
@@ -244,11 +280,16 @@
     flex: 1;
     padding: 20px;
     overflow-y: auto;
-    --background-color: #d6c8bd;
-    --font-color: #2E2E2E;
 
     display: flex;
     justify-content: center;
+  }
+
+  #resultado {
+    --background-color: #d6c8bd;
+    --font-color: #2E2E2E;
+    background-color: var(--background-color);
+    color: var(--font-color);
   }
 
   /* CONTROLES */
@@ -257,9 +298,31 @@
   }
 
   .control {
+    display: grid;
+    grid-template-columns: 1fr 50px auto;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .control label:first-child {
+    text-align: left;
+  }
+
+  .control label:nth-child(2) {
+    text-align: center;
+    min-width: 50px;
+  }
+
+  .control div {
     display: flex;
-    justify-content: space-between;
-    margin-bottom: 8px;
+    gap: 6px;
+  }
+
+  .control button {
+    width: 32px;
+    height: 32px;
+    padding: 0;
   }
 
   button {
@@ -275,7 +338,56 @@
     background: #666;
   }
 
+  .appearance-control {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 14px;
+  }
+
+  .appearance-control label {
+    font-size: 14px;
+    font-weight: bold;
+  }
+
+  .appearance-control input[type="color"] {
+    width: 100%;
+    height: 40px;
+    padding: 2px;
+    cursor: pointer;
+  }
+
+  .appearance-control select {
+    height: 36px;
+  }
+
+  .reading-group {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .reading-group input[type="range"] {
+    width: 100%;
+  }
+
+  .reading-group select {
+    height: 36px;
+  }
+
+  .reading-control {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .reading-control label {
+    font-size: 14px;
+    font-weight: bold;
+  }
+
   .buttons {
+    margin-top: 4px;
     display: flex;
     gap: 10px;
   }
