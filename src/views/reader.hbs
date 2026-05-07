@@ -106,7 +106,72 @@
   </div>
 </div>
 
+<div id="dictionaryModal" class="dictionary-modal hidden">
+  <div class="dictionary-card">
+    <div class="dictionary-header">
+      <h3 id="dictionaryWord">Palavra</h3>
+
+      <button id="closeDictionary">
+        ✖
+      </button>
+    </div>
+
+    <div id="dictionaryContent">
+      Carregando...
+    </div>
+  </div>
+</div>
+
 <script>
+  class DictionaryStore {
+    constructor() {
+      this.cache = new Map();
+      this.baseUrl = "http://localhost:3000/api/word";
+    }
+
+    async getWord(word) {
+      const normalized =
+        word
+          .toLowerCase()
+          .trim()
+          .replace(/[.,!?;:()"]/g, "");
+
+      if (!normalized) {
+        return null;
+      }
+
+      // cache
+      if (this.cache.has(normalized)) {
+        return this.cache.get(normalized);
+      }
+
+      try {
+        const response = await fetch(
+          `${this.baseUrl}/${encodeURIComponent(normalized)}`
+        );
+
+        const data = await response.json();
+
+        // backend retornou erro
+        if (!response.ok || data.error) {
+          return {
+            error: true,
+            message: "Palavra não encontrada."
+          };
+        }
+
+        this.cache.set(normalized, data);
+
+        return data;
+      } catch (error) {
+        return {
+          error: true,
+          message: "Erro ao buscar palavra."
+        };
+      }
+    }
+  }
+
   class ReaderUI {
     constructor() {
       this.content = document.getElementById("resultado");
@@ -121,6 +186,11 @@
       this.synth = window.speechSynthesis;
       this.utterance = null;
 
+      this.dictionary = new DictionaryStore();
+
+      this.lastRange = null;
+      this.lastNode = null;
+
       this.init();
     }
 
@@ -128,6 +198,9 @@
       this.bindEvents();
       this.loadVoices();
       this.applyStyles();
+      this.wrapWords();
+      this.enableWordClick();
+      this.enableWordHover();
 
       speechSynthesis.onvoiceschanged = () => {
         this.loadVoices();
@@ -140,6 +213,17 @@
           this.loadVoices();
         }, 500);
       });
+
+      document
+        .getElementById(
+          "closeDictionary"
+        )
+        .addEventListener(
+          "click",
+          () => {
+            this.closeDictionaryModal();
+          }
+        );
     }
 
     bindEvents() {
@@ -410,6 +494,194 @@
         "pauseButton"
       ).textContent = "⏸️ Pausar";
     }
+
+    enableWordClick() {
+      this.content.addEventListener("click", async (event) => {
+        const range = document.caretRangeFromPoint?.(
+          event.clientX,
+          event.clientY
+        );
+
+        if (!range) return;
+
+        const node = range.startContainer;
+
+        if (!node || node.nodeType !== 3) return;
+
+        const text = node.textContent;
+
+        const word = this.getWordFromText(text, range.startOffset);
+
+        if (!word) return;
+
+        const result =
+          await this.dictionary.getWord(word);
+
+        this.openDictionaryModal(word, result);
+      });
+    }
+
+    getWordFromText(text, offset) {
+      const left = text.slice(0, offset);
+      const right = text.slice(offset);
+
+      const leftMatch =
+        left.match(/[\p{L}]+$/u);
+
+      const rightMatch =
+        right.match(/^[\p{L}]+/u);
+
+      const word =
+        (leftMatch ? leftMatch[0] : "") +
+        (rightMatch ? rightMatch[0] : "");
+
+      return word || null;
+    }
+
+    enableWordHover() {
+      this.content.addEventListener("mousemove", (event) => {
+        const range = document.caretRangeFromPoint?.(
+          event.clientX,
+          event.clientY
+        );
+
+        if (!range) return;
+
+        const node = range.startContainer;
+
+        if (!node || node.nodeType !== 3) return;
+
+        this.clearHighlight();
+
+        const span = this.getWordRangeSpan(node, range.startOffset);
+
+        if (!span) return;
+
+        span.classList.add("word-highlight");
+
+        this.lastNode = span;
+      });
+
+      this.content.addEventListener("mouseleave", () => {
+        this.clearHighlight();
+      });
+    }
+
+    getWordRangeSpan(textNode, offset) {
+      const text = textNode.textContent;
+
+      const left = text.slice(0, offset);
+      const right = text.slice(offset);
+
+      const leftMatch = left.match(/[\p{L}]+$/u);
+      const rightMatch = right.match(/^[\p{L}]+/u);
+
+      const word =
+        (leftMatch ? leftMatch[0] : "") +
+        (rightMatch ? rightMatch[0] : "");
+
+      if (!word) return null;
+
+      return {
+        classList: {
+          add: () => { },
+          remove: () => { }
+        },
+        node: textNode,
+        word
+      };
+    }
+
+    wrapWords() {
+      const walker = document.createTreeWalker(
+        this.content,
+        NodeFilter.SHOW_TEXT,
+        null
+      );
+
+      const nodes = [];
+
+      while (walker.nextNode()) {
+        nodes.push(walker.currentNode);
+      }
+
+      nodes.forEach((node) => {
+        const text = node.nodeValue;
+
+        if (!text.trim()) return;
+
+        const words = text.split(/(\s+)/);
+
+        const spanized = words
+          .map((w) => {
+            if (/\s+/.test(w)) return w;
+
+            const clean = w.replace(/[^\p{L}]/gu, "");
+
+            if (!clean) return w;
+
+            return `<span class="word" data-word="${clean}">${w}</span>`;
+          })
+          .join("");
+
+        const wrapper = document.createElement("span");
+        wrapper.innerHTML = spanized;
+
+        node.replaceWith(wrapper);
+      });
+    }
+
+    openDictionaryModal(word, result) {
+      const modal =
+        document.getElementById(
+          "dictionaryModal"
+        );
+
+      const title =
+        document.getElementById(
+          "dictionaryWord"
+        );
+
+      const content =
+        document.getElementById(
+          "dictionaryContent"
+        );
+
+      title.textContent = word;
+
+      if (
+        !result ||
+        result.error
+      ) {
+        content.innerHTML = `
+      <p>
+        ${result?.message ||
+          "Nenhuma definição encontrada."}
+      </p>
+    `;
+      } else {
+        content.innerHTML =
+          result.definitions
+            .map(
+              (definition) => `
+            <div class="definition">
+              • ${definition}
+            </div>
+          `
+            )
+            .join("");
+      }
+
+      modal.classList.remove("hidden");
+    }
+
+    closeDictionaryModal() {
+      document
+        .getElementById(
+          "dictionaryModal"
+        )
+        .classList.add("hidden");
+    }
   }
 
   new ReaderUI();
@@ -465,6 +737,23 @@
     word-spacing: 0.2em;
     letter-spacing: 0;
     font-size: 1em;
+  }
+
+  .content {
+    cursor: text;
+    user-select: text;
+  }
+
+  .content {
+    cursor: pointer;
+  }
+
+  .content:hover {
+    cursor: pointer;
+  }
+
+  .content * {
+    cursor: pointer;
   }
 
   /* GRUPOS */
@@ -554,5 +843,73 @@
     display: flex;
     gap: 10px;
     margin-top: 4px;
+  }
+
+  .dictionary-word {
+    cursor: pointer;
+    border-radius: 4px;
+  }
+
+  .dictionary-word:hover {
+    background: rgba(0, 0, 0, 0.12);
+  }
+
+  .word-highlight {
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 4px;
+  }
+
+  .word {
+    cursor: pointer;
+    transition: 0.15s;
+    border-radius: 4px;
+  }
+
+  .word:hover {
+    background: rgba(0, 0, 0, 0.12);
+  }
+
+  .dictionary-modal {
+    position: fixed;
+    inset: 0;
+
+    background: rgba(0, 0, 0, 0.45);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    z-index: 999;
+  }
+
+  .dictionary-modal.hidden {
+    display: none;
+  }
+
+  .dictionary-card {
+    width: min(700px, 90%);
+    max-height: 80vh;
+
+    overflow-y: auto;
+
+    background: white;
+    border-radius: 12px;
+
+    padding: 20px;
+
+    color: #222;
+  }
+
+  .dictionary-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-bottom: 20px;
+  }
+
+  .definition {
+    margin-bottom: 14px;
+    line-height: 1.6;
   }
 </style>

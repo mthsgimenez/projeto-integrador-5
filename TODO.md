@@ -3,8 +3,8 @@
 - [X] Opções de cores
 - [X] Opções de tamanho da fonte
 - [ ] Opções de limitar palavras
-- [ ] Integração API dicionário
+- [X] Integração API dicionário
 - [ ] Login
 - [ ] Carregar arquivos .epub
-- [ ] Melhorar UI/UX
+- [X] Melhorar UI/UX
 - [ ] Fix OpenDyslexic não carrega

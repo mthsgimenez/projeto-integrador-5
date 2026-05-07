@@ -8,7 +8,7 @@ router.get('/word/:word', async (req, res) => {
         res.json({ word, definitions });
     }
     catch (error) {
-        res.status(404).json({ error: error.message });
+        res.status(404).json({ error: "not found" });
     }
 });
 
