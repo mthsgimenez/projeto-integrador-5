@@ -25,3 +25,13 @@ button {
 button:hover {
   background-color: #5a7a1d;
 }
+
+/* header auth inputs */
+#auth-area input {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+#auth-area button {
+  margin-left: 6px;
+}
