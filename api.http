@@ -16,6 +16,25 @@ Content-Type: application/json
   "email": "teste@email.com",
   "senha": "123456"
 }
+
+### Exemplo de resposta
+
+HTTP/1.1 200 OK
+{
+  "token": "JWT_TOKEN",
+  "user": {
+    "_id": "{{userId}}",
+    "email": "teste@email.com",
+    "nome": "Teste"
+  }
+}
+
+### Usando o token
+
+# Exemplo: buscar usuário com Authorization header
+GET http://localhost:3000/api/users/{{userId}}
+Authorization: Bearer JWT_TOKEN
+
 ###
 
 @userId = 69dd74e5ad91d001f7005d4b

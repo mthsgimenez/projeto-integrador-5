@@ -4,7 +4,7 @@
 - [X] Opções de tamanho da fonte
 - [ ] Opções de limitar palavras
 - [X] Integração API dicionário
-- [ ] Login
+- [X] Login
 - [ ] Carregar arquivos .epub
 - [X] Melhorar UI/UX
 - [ ] Fix OpenDyslexic não carrega

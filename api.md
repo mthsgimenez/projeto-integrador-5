@@ -11,7 +11,7 @@ Esta API gerencia usuários, textos e configurações de leitura para uma aplica
 
 - Prefixo obrigatório: `/api`
 - Formato de resposta: JSON
-- Autenticação: email + senha (sem JWT por enquanto)
+- Autenticação: email + senha (JWT Bearer tokens issued on login)
 
 ---
 
@@ -65,9 +65,12 @@ Content-Type: application/json
 ### Resposta
 
 {
-  "_id": "userId",
-  "email": "usuario@email.com",
-  "nome": "Nome do Usuário"
+  "token": "JWT_TOKEN",
+  "user": {
+    "_id": "userId",
+    "email": "usuario@email.com",
+    "nome": "Nome do Usuário"
+  }
 }
 
 ---
@@ -213,8 +216,8 @@ Todas as respostas são JSON.
 # 🔐 Autenticação
 
 - Email + senha
-- Sem JWT
-- Login retorna usuário
+- Autenticação baseada em JWT (Bearer tokens)
+- Login retorna { "token": "<jwt>", "user": { ... } }. Envie o token no cabeçalho Authorization: Bearer <token> nas requisições subsequentes.
 
 ---
 
