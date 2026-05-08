@@ -6,18 +6,44 @@
     });
   }
 
-  document.addEventListener('DOMContentLoaded', function(){
+  document.addEventListener('DOMContentLoaded', async function(){
     const authArea = document.getElementById('auth-area');
     if(!authArea) return;
 
     let currentUser = JSON.parse(localStorage.getItem('user') || 'null');
+    let token = localStorage.getItem('token') || null;
 
-    function render(){
+    function authFetch(url, opts = {}){
+      opts.headers = opts.headers || {};
+      if(token) opts.headers['Authorization'] = 'Bearer ' + token;
+      return fetch(url, opts);
+    }
+    window.authFetch = authFetch;
+
+    async function ensureUserName(){
+      if(!currentUser || currentUser.nome) return;
+      if(!token || !currentUser._id) return;
+      try{
+        const res = await authFetch('/api/users/' + encodeURIComponent(currentUser._id));
+        if(!res.ok) return;
+        const full = await res.json();
+        if(full && full.nome){
+          currentUser.nome = full.nome;
+          localStorage.setItem('user', JSON.stringify(currentUser));
+        }
+      }catch(e){ /* ignore */ }
+    }
+
+    async function render(){
+      await ensureUserName();
+
       if(currentUser){
-        authArea.innerHTML = ` <span style="margin-right:10px;">Olá, ${escapeHtml(currentUser.nome)}</span> <button id="logoutBtn">Sair</button>`;
+        const displayName = currentUser.nome || currentUser.email || (currentUser._id ? currentUser._id.substring(0,6) : 'Usuário');
+        authArea.innerHTML = ` <span style="margin-right:10px;">Olá, ${escapeHtml(displayName)}</span> <button id="logoutBtn">Sair</button>`;
         document.getElementById('logoutBtn').addEventListener('click', function(){
           localStorage.removeItem('user');
-          currentUser = null;
+          localStorage.removeItem('token');
+          currentUser = null; token = null;
           render();
         });
       } else {
@@ -41,10 +67,13 @@
               alert(err.erro || 'Falha no login');
               return;
             }
-            const user = await res.json();
+            const data = await res.json();
+            const user = data.user || data;
+            const t = data.token;
             // store minimal user info
             const stored = { _id: user._id, nome: user.nome, email: user.email };
             localStorage.setItem('user', JSON.stringify(stored));
+            if(t){ localStorage.setItem('token', t); token = t; }
             currentUser = stored;
             render();
           } catch(e){
