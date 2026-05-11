@@ -21,7 +21,7 @@ async function validate() {
     const res = await axios.post("http://localhost:3000/api/read", { text: text.value });
 
     if (res.status === 200) {
-      textStore.setText(text.value);
+      textStore.setTokens(res.data);
       router.push('/read');
     }
   } catch (e) {

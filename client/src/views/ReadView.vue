@@ -1,11 +1,12 @@
 <script setup>
 import Sidebar from '@/components/Sidebar.vue';
+import Reader from '@/components/Reader.vue';
 </script>
 
 <template>
     <main>
         <Sidebar />
-        <div></div>
+        <Reader />
     </main>
 </template>
 

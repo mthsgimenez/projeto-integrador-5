@@ -15,6 +15,7 @@ export const useConfigStore = defineStore('config', {
         fontColor: "#2E2E2E",
         fontFamily: "Arial",
         speed: 1,
+        maxWords: Infinity,
     }),
 
     actions: {

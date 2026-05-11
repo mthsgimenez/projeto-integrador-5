@@ -1,13 +1,17 @@
-import { defineStore } from 'pinia'
+import { defineStore } from "pinia";
 
-export const useTextStore = defineStore('text', {
+export const useTextStore = defineStore("text", {
   state: () => ({
-    text: null,
+    tokens: []
   }),
 
   actions: {
-    setText(text) {
-      this.text = text;
+    setTokens(tokens) {
+      this.tokens = tokens;
     },
-  },
+
+    clear() {
+      this.tokens = [];
+    }
+  }
 });
