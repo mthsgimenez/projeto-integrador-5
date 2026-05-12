@@ -11,9 +11,9 @@ import Reader from '@/components/Reader.vue';
 </template>
 
 <style scoped>
-    main {
-        display: flex;
-        height: 100vh;
-        overflow: hidden;
-    }
+main {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+}
 </style>

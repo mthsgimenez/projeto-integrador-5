@@ -8,7 +8,7 @@ const round1 = (value) => Math.round(value * 10) / 10;
 export const useConfigStore = defineStore('config', {
     state: () => ({
         lineHeight: 1.6,
-        wordSpacing: 0.2,
+        wordSpacing: 0,
         letterSpacing: 0,
         fontScale: 1.6,
         backgroundColor: "#d6c8bd",
@@ -26,7 +26,7 @@ export const useConfigStore = defineStore('config', {
         decreaseLineHeight(step = 0.2) {
             this.lineHeight = clamp(
                 round1(this.lineHeight - step),
-                0
+                1
             );
         },
 
@@ -61,6 +61,10 @@ export const useConfigStore = defineStore('config', {
                 round1(this.fontScale - step),
                 1
             );
+        },
+
+        clearMaxWords() {
+            this.maxWords = Infinity;
         },
     }
 });

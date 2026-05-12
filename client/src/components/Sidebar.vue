@@ -46,6 +46,12 @@ const configStore = useConfigStore();
                     <button @click="configStore.increaseFontScale()">+</button>
                 </div>
             </div>
+            
+            <div class="control">
+                <label>N de palavras</label>
+                <input type="number" min="1" v-model="configStore.maxWords" />
+                <button @click="configStore.clearMaxWords()" style="width: 64px;">Limpar</button>
+            </div>
         </div>
 
         <div class="group">
@@ -117,7 +123,7 @@ h2 {
 }
 
 .sidebar {
-    width: 260px;
+    width: 284px;
     height: 100vh;
     padding: 20px;
     overflow-y: auto;
