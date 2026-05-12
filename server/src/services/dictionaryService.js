@@ -1,19 +1,50 @@
-const scraper = require("./dictionaryScrapingService");
+const axios = require('axios');
+const cheerio = require('cheerio');
 
-const getWordDefinition = async (word) => {
+class DictionaryScraper {
+  static baseUrl = "https://www.dicio.com.br/";
+
+  static async scrape(word) {
     try {
-        const wordNormalized = word.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-        const definitions = await scraper.scrapeDictionary(wordNormalized);
-        if (definitions.length === 0) {
-            throw new Error(`No definitions found for the word: ${word}`);
-        }
-        return definitions;
-    } catch (error) {
-        console.error('Error getting word definition:', error);
-        throw error;
+      const results = [];
+      const response = await axios.get(`${this.baseUrl}${word}`);
+      const $ = cheerio.load(response.data);
+
+      $("p.significado span").each((i, el) => {
+        const classe = $(el).attr("class");
+        if (classe === "cl" || classe === "etim") return;
+
+        let texto = $(el).text().trim();
+        texto = texto.replace(/\[.*?\]\s*/g, "");
+
+        if (texto) results.push(texto);
+      });
+
+      return results;
+    } catch (err) {
+      console.error("Scraper error:", err);
+      return [];
     }
-};
+  }
+}
+
+class DictionaryService {
+  static normalize(word) {
+    return word.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  }
+
+  static async getWordDefinition(word) {
+    const normalized = DictionaryService.normalize(word);
+    const definitions = await DictionaryScraper.scrape(normalized);
+
+    if (!definitions.length) {
+      throw new Error(`No definitions found for: ${word}`);
+    }
+
+    return definitions;
+  }
+}
 
 module.exports = {
-    getWordDefinition
+  getWordDefinition: DictionaryService.getWordDefinition
 };
