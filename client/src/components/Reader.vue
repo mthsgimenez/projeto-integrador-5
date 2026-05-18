@@ -79,6 +79,12 @@ function isDark(color) {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
+
+  transition:
+    font-size 0.3s ease,
+    letter-spacing 0.3s ease,
+    word-spacing 0.3s ease,
+    line-height 0.3s ease;
 }
 
 .word {
