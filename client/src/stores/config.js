@@ -16,6 +16,7 @@ export const useConfigStore = defineStore('config', {
         fontFamily: "Arial",
         speed: 1,
         maxWords: Infinity,
+        startIndex: 0,
     }),
 
     actions: {
@@ -65,6 +66,27 @@ export const useConfigStore = defineStore('config', {
 
         clearMaxWords() {
             this.maxWords = Infinity;
+        },
+
+        increaseScroll() {
+            if (this.maxWords == Infinity) {
+                return;
+            }
+            this.startIndex = round1(this.startIndex + this.maxWords);
+        },
+
+        decreaseScroll() {
+            if (this.maxWords == Infinity) {
+                return;
+            }
+            this.startIndex = clamp(
+                round1(this.startIndex - this.maxWords),
+                0
+            );
+        },
+
+        resetScroll() {
+            this.startIndex = 0;
         },
     }
 });

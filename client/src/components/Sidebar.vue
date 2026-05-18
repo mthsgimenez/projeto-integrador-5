@@ -46,11 +46,20 @@ const configStore = useConfigStore();
                     <button @click="configStore.increaseFontScale()">+</button>
                 </div>
             </div>
-            
+
             <div class="control">
                 <label>N de palavras</label>
                 <input type="number" min="1" v-model="configStore.maxWords" />
-                <button @click="configStore.clearMaxWords()" style="width: 64px;">Limpar</button>
+                <button @click="configStore.clearMaxWords(); configStore.resetScroll();" style="width: 64px;">Limpar</button>
+            </div>
+
+            <div class="control">
+                <label>Navegação</label>
+
+                <div>
+                    <button @click="configStore.decreaseScroll()">⬅</button>
+                    <button @click="configStore.increaseScroll()">➡</button>
+                </div>
             </div>
         </div>
 

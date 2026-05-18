@@ -9,17 +9,27 @@ const configStore = useConfigStore();
 const emit = defineEmits(["wordClick"]);
 
 const visibleTokens = computed(() => {
-  let wordCount = 0;
+  if (!configStore.maxWords) {
+    return textStore.tokens;
+  }
 
-  return textStore.tokens.filter(t => {
-    if (!t.isWord && wordCount < configStore.maxWords) return true;
+  let wordIndex = 0;
 
-    if (wordCount < configStore.maxWords) {
-      wordCount++;
-      return true;
+  return textStore.tokens.filter(token => {
+    if (!token.isWord) {
+      return (
+        wordIndex >= configStore.startIndex &&
+        wordIndex < configStore.startIndex + configStore.maxWords
+      );
     }
 
-    return false;
+    const visible =
+      wordIndex >= configStore.startIndex &&
+      wordIndex < configStore.startIndex + configStore.maxWords;
+
+    wordIndex++;
+
+    return visible;
   });
 });
 
