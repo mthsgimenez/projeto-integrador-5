@@ -1,0 +1,201 @@
+<script setup>
+import { ref } from 'vue'
+import { useUserStore } from '@/stores/user'
+
+defineProps({
+    show: Boolean
+})
+
+const emit = defineEmits(['close', 'switch-to-register'])
+
+const userStore = useUserStore()
+const email = ref('')
+const password = ref('')
+const errorMessage = ref('')
+
+const handleLogin = async () => {
+    errorMessage.value = ''
+    try {
+        await userStore.login(email.value, password.value)
+        // Reset form and close modal on success
+        email.value = ''
+        password.value = ''
+        emit('close')
+    } catch (error) {
+        errorMessage.value = error.message || 'Erro ao fazer login'
+    }
+}
+
+const switchForm = () => {
+    emit('switch-to-register')
+}
+</script>
+
+<template>
+    <div v-if="show" class="modal-overlay" @click="emit('close')">
+        <div class="modal-content" @click.stop>
+            <button class="close-btn" @click="emit('close')">✕</button>
+
+            <h2>Entrar</h2>
+
+            <form @submit.prevent="handleLogin">
+                <div v-if="errorMessage" class="error-message">
+                    {{ errorMessage }}
+                </div>
+
+                <div class="form-group">
+                    <label for="email">E-mail</label>
+                    <input id="email" v-model="email" type="email" required placeholder="seu@email.com" />
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Senha</label>
+                    <input id="password" v-model="password" type="password" required placeholder="Sua senha" />
+                </div>
+
+                <button type="submit" class="btn-submit" :disabled="userStore.loading">
+                    {{ userStore.loading ? 'Entrando...' : 'Entrar' }}
+                </button>
+            </form>
+
+            <p class="form-switch">
+                Não tem conta?
+                <button type="button" @click="switchForm" class="link-btn">Registre-se</button>
+            </p>
+        </div>
+    </div>
+</template>
+
+<style scoped>
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: white;
+    border-radius: 8px;
+    padding: 32px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    position: relative;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.close-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #666;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.close-btn:hover {
+    color: #333;
+}
+
+h2 {
+    margin-top: 0;
+    margin-bottom: 24px;
+    color: #333;
+}
+
+.error-message {
+    background-color: #fee;
+    color: #c33;
+    border: 1px solid #fcc;
+    padding: 10px 12px;
+    border-radius: 4px;
+    margin-bottom: 16px;
+    font-size: 14px;
+}
+
+.form-group {
+    margin-bottom: 16px;
+}
+
+label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: #333;
+    font-size: 14px;
+}
+
+input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    font-family: Arial, Helvetica, sans-serif;
+    box-sizing: border-box;
+}
+
+input:focus {
+    outline: none;
+    border-color: #2ecc71;
+    box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.1);
+}
+
+.btn-submit {
+    width: 100%;
+    padding: 12px;
+    background-color: #2ecc71;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: background-color 0.3s ease;
+}
+
+.btn-submit:hover:not(:disabled) {
+    background-color: #27ae60;
+}
+
+.btn-submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.form-switch {
+    text-align: center;
+    margin-top: 16px;
+    font-size: 14px;
+    color: #666;
+}
+
+.link-btn {
+    background: none;
+    border: none;
+    color: #2ecc71;
+    cursor: pointer;
+    font-weight: 600;
+    padding: 0;
+    text-decoration: none;
+}
+
+.link-btn:hover {
+    text-decoration: underline;
+}
+</style>
