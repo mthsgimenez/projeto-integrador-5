@@ -65,20 +65,21 @@ function isDark(color) {
     wordSpacing: configStore.wordSpacing + 'em',
     letterSpacing: configStore.letterSpacing + 'em',
   }">
-    <span v-for="token in visibleTokens" :key="token.index" :class="{ word: token.isWord }" @click="handleClick(token)">
-      {{ token.text }}
-    </span>
+    <div class="text-content">
+      <span v-for="token in visibleTokens" :key="token.index" :class="{ word: token.isWord }" @click="handleClick(token)">
+        {{ token.text }}
+      </span>
+      <div aria-hidden="true" class="spacer"></div>
+    </div>
   </div>
 </template>
 
 <style scoped>
 .text-wrapper {
-  white-space: pre-wrap;
-  padding: 24px;
-
   flex: 1;
   min-height: 0;
   overflow-y: auto;
+  overflow-anchor: none;
 
   transition:
     font-size 0.3s ease,
@@ -94,5 +95,14 @@ function isDark(color) {
 
 .word:hover {
   background-color: var(--hover);
+}
+
+.text-content {
+  padding: 24px;
+  white-space: pre-wrap;
+}
+
+.spacer {
+  height: 3em;
 }
 </style>
