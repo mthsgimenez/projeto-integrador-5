@@ -99,8 +99,11 @@ export const useUserStore = defineStore('user', () => {
     const storedToken = localStorage.getItem('authToken')
     if (storedUser && storedToken) {
       try {
-        user.value = JSON.parse(storedUser)
+        const parsed = JSON.parse(storedUser)
+        user.value = parsed
         token.value = storedToken
+        const preferencesStore = usePreferencesStore()
+        preferencesStore.loadFromUser(parsed)
       } catch (err) {
         console.error('Failed to parse stored user', err)
         logout()

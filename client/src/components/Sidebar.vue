@@ -1,12 +1,44 @@
 <script setup>
-import { onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import { usePreferencesStore } from '@/stores/preferences';
 import { usePaginationStore } from '@/stores/pagination';
 import { useReaderStore } from '@/stores/reader';
+import { useUserStore } from '@/stores/user';
 
 const preferencesStore = usePreferencesStore();
 const paginationStore = usePaginationStore();
 const readerStore = useReaderStore();
+const userStore = useUserStore();
+
+const feedbackText = ref('');
+
+function showFeedback(msg) {
+    feedbackText.value = msg;
+    setTimeout(() => { feedbackText.value = ''; }, 2000);
+}
+
+async function handleSave() {
+    try {
+        await preferencesStore.saveToServer();
+        showFeedback('Salvo!');
+    } catch {
+        showFeedback('Erro ao salvar');
+    }
+}
+
+async function handleReload() {
+    try {
+        await preferencesStore.reloadFromServer();
+        showFeedback('Carregado!');
+    } catch {
+        showFeedback('Erro ao carregar');
+    }
+}
+
+function handleReset() {
+    preferencesStore.resetToDefaults();
+    showFeedback('Configurações resetadas');
+}
 
 function loadVoices() {
     readerStore.loadVoices();
@@ -146,6 +178,29 @@ onUnmounted(() => {
             </div>
         </div>
 
+        <div class="group" v-if="userStore.isLoggedIn()">
+            <h4>💾 Config</h4>
+
+            <div class="persist-buttons">
+                <button @click="handleSave" :disabled="preferencesStore.saving" class="btn-persist">
+                    {{ preferencesStore.saving ? 'Salvando...' : '💾 Salvar' }}
+                </button>
+                <button @click="handleReload" :disabled="preferencesStore.loading" class="btn-persist">
+                    {{ preferencesStore.loading ? 'Carregando...' : '🔄 Recarregar' }}
+                </button>
+            </div>
+        </div>
+
+        <div class="group">
+            <h4>↺ Config</h4>
+
+            <div class="persist-buttons">
+                <button @click="handleReset" class="btn-persist">↺ Resetar</button>
+            </div>
+        </div>
+
+        <div v-if="feedbackText" class="feedback">{{ feedbackText }}</div>
+
         <!-- TODO: state do reader -->
         <div class="group">
             <button id="breakLinesButton">
@@ -253,5 +308,25 @@ input[type="range"] {
     display: flex;
     gap: 10px;
     margin-top: 4px;
+}
+
+.persist-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.btn-persist {
+    width: 100%;
+    padding: 10px 16px;
+}
+
+.feedback {
+    text-align: center;
+    font-size: 13px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    background-color: rgba(255, 255, 255, 0.15);
+    margin-bottom: 12px;
 }
 </style>

@@ -1,4 +1,7 @@
 import { defineStore } from "pinia";
+import { useUserStore } from "./user";
+
+const API_BASE = import.meta.env.VITE_API_BASE;
 
 const clamp = (value, min = 0) => Math.max(min, value);
 const round1 = (value) => Math.round(value * 10) / 10;
@@ -14,6 +17,8 @@ export const usePreferencesStore = defineStore("preferences", {
     highlightColor: "#ffdc32",
     fontFamily: "Arial",
     speed: 1,
+    saving: false,
+    loading: false,
   }),
 
   actions: {
@@ -73,6 +78,75 @@ export const usePreferencesStore = defineStore("preferences", {
       this.highlightColor = "#ffdc32";
       this.fontFamily = "Arial";
       this.speed = 1;
+    },
+
+    toServerObject() {
+      return {
+        espacoLinha: this.lineHeight,
+        espacoPalavra: this.wordSpacing,
+        espacoLetra: this.letterSpacing,
+        tamanhoFonte: this.fontScale,
+        corFundo: this.backgroundColor,
+        corFonte: this.fontColor,
+        corDestaque: this.highlightColor,
+        nomeFonte: this.fontFamily,
+        velocidadeVoz: this.speed,
+      };
+    },
+
+    async saveToServer() {
+      const userStore = useUserStore();
+      if (!userStore.isLoggedIn()) return;
+
+      this.saving = true;
+      try {
+        const res = await fetch(
+          `${API_BASE}/users/${userStore.user._id}/configs`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${userStore.token}`,
+            },
+            body: JSON.stringify(this.toServerObject()),
+          }
+        );
+        if (!res.ok) throw new Error("Erro ao salvar configurações");
+        const data = await res.json();
+        this.loadFromUser(data);
+        if (userStore.user) {
+          userStore.user.configs = data.configs;
+          localStorage.setItem("user", JSON.stringify(userStore.user));
+        }
+      } finally {
+        this.saving = false;
+      }
+    },
+
+    async reloadFromServer() {
+      const userStore = useUserStore();
+      if (!userStore.isLoggedIn()) return;
+
+      this.loading = true;
+      try {
+        const res = await fetch(
+          `${API_BASE}/users/${userStore.user._id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${userStore.token}`,
+            },
+          }
+        );
+        if (!res.ok) throw new Error("Erro ao carregar configurações");
+        const data = await res.json();
+        this.loadFromUser(data);
+        if (userStore.user) {
+          userStore.user.configs = data.configs;
+          localStorage.setItem("user", JSON.stringify(userStore.user));
+        }
+      } finally {
+        this.loading = false;
+      }
     },
   },
 });
