@@ -151,26 +151,23 @@ input {
 
 input:focus {
     outline: none;
-    border-color: #2ecc71;
+    border-color: var(--color-button-hover);
     box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.1);
 }
 
 .btn-submit {
     width: 100%;
     padding: 12px;
-    background-color: #2ecc71;
-    color: white;
     border: none;
     border-radius: 4px;
     font-size: 14px;
     font-weight: 600;
-    cursor: pointer;
     margin-top: 8px;
     transition: background-color 0.3s ease;
 }
 
 .btn-submit:hover:not(:disabled) {
-    background-color: #27ae60;
+    background-color: var(--color-button-hover);
 }
 
 .btn-submit:disabled {
@@ -188,7 +185,7 @@ input:focus {
 .link-btn {
     background: none;
     border: none;
-    color: #2ecc71;
+    color: var(--color-button);
     cursor: pointer;
     font-weight: 600;
     padding: 0;

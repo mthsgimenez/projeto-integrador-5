@@ -96,20 +96,11 @@ header {
 .btn-login {
   background-color: transparent;
   color: inherit;
-  border: 2px solid currentColor;
+  border: 1px solid var(--color-text);
 }
 
 .btn-login:hover {
   background-color: rgba(0, 0, 0, 0.05);
-}
-
-.btn-register {
-  background-color: #2ecc71;
-  color: white;
-}
-
-.btn-register:hover {
-  background-color: #27ae60;
 }
 
 .btn-logout {
