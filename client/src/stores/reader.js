@@ -5,6 +5,7 @@ import { useConfigStore } from "./config";
 export const useReaderStore = defineStore("reader", {
   state: () => ({
     currentWordIndex: null,
+    currentWordPos: null,
     isPlaying: false,
     isPaused: false,
     voices: [],
@@ -18,6 +19,7 @@ export const useReaderStore = defineStore("reader", {
 
     setWord(index) {
       this.currentWordIndex = index;
+      this.currentWordPos = null;
     },
 
     getVisibleWordTokens() {
@@ -40,86 +42,76 @@ export const useReaderStore = defineStore("reader", {
       const synth = window.speechSynthesis;
       if (!synth) return;
 
-      if (this.isPaused) {
-        synth.resume();
-        this.isPaused = false;
-        return;
-      }
-
       synth.cancel();
 
       const words = this.getVisibleWordTokens();
       if (words.length === 0) return;
 
-      const session = Date.now();
-      this._session = session;
-
-      let startIdx = 0;
-      if (this.currentWordIndex !== null) {
+      let startPos = 0;
+      if (this.isPaused && this.currentWordPos !== null) {
+        startPos = this.currentWordPos;
+        if (startPos >= words.length) startPos = 0;
+      } else if (this.currentWordIndex !== null) {
         const found = words.findIndex(w => w.index === this.currentWordIndex);
-        if (found !== -1) startIdx = found;
+        if (found !== -1) startPos = found;
       }
 
-      const wordsToRead = words.slice(startIdx);
-      if (wordsToRead.length === 0) return;
+      this._cancelRequested = false;
+      this.isPlaying = true;
+      this.isPaused = false;
+      this._speakWord(words, startPos);
+    },
 
-      let fullText = "";
-      const offsets = [];
+    _speakWord(words, pos) {
+      if (pos >= words.length) {
+        this.isPlaying = false;
+        this.isPaused = false;
+        this.currentWordIndex = null;
+        this.currentWordPos = null;
+        return;
+      }
 
-      wordsToRead.forEach((token, i) => {
-        offsets.push({ index: token.index, charOffset: fullText.length });
-        if (i > 0) fullText += " ";
-        fullText += token.text;
-      });
+      const token = words[pos];
+      this.currentWordIndex = token.index;
+      this.currentWordPos = pos;
 
-      const utterance = new SpeechSynthesisUtterance(fullText);
+      const utterance = new SpeechSynthesisUtterance(token.text);
       const voice = this.voices.find(v => v.voiceURI === this.selectedVoiceURI);
       if (voice) utterance.voice = voice;
       utterance.rate = useConfigStore().speed;
       utterance.lang = "pt-BR";
 
-      utterance.onboundary = (event) => {
-        if (this._session !== session) return;
-        if (event.name === "word") {
-          const charIndex = event.charIndex;
-          let match = offsets[0];
-          for (const off of offsets) {
-            if (off.charOffset <= charIndex) match = off;
-            else break;
-          }
-          this.currentWordIndex = match.index;
-        }
-      };
-
       utterance.onend = () => {
-        if (this._session !== session) return;
-        this.isPlaying = false;
-        this.isPaused = false;
-        this.currentWordIndex = null;
+        if (this._cancelRequested) return;
+        this._speakWord(words, pos + 1);
       };
 
       utterance.onerror = () => {
-        if (this._session !== session) return;
+        if (this._cancelRequested) return;
         this.isPlaying = false;
         this.isPaused = false;
+        this.currentWordIndex = null;
+        this.currentWordPos = null;
       };
 
-      this.isPlaying = true;
-      synth.speak(utterance);
+      window.speechSynthesis.speak(utterance);
     },
 
     pause() {
       if (this.isPlaying && !this.isPaused) {
-        window.speechSynthesis.pause();
+        this._cancelRequested = true;
+        window.speechSynthesis.cancel();
         this.isPaused = true;
       }
     },
 
     stop() {
+      this._cancelRequested = true;
       window.speechSynthesis.cancel();
       this.isPlaying = false;
       this.isPaused = false;
       this.currentWordIndex = null;
+      this.currentWordPos = null;
     },
 
     togglePlay() {
