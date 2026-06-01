@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from "vue";
+import { computed, ref, onMounted, onUnmounted } from "vue";
 import { useConfigStore } from "@/stores/config";
 import { useTextStore } from "@/stores/text";
 import { useReaderStore } from "@/stores/reader";
@@ -35,12 +35,82 @@ const visibleTokens = computed(() => {
   });
 });
 
-function handleClick(token) {
-  if (token.isWord) {
-    emit("wordClick", token);
-    readerStore.setWord(token.index);
+const showPopover = ref(false);
+const popoverToken = ref(null);
+const popoverStyle = ref({});
+const popoverRef = ref(null);
+
+let popoverOpening = false;
+
+function handleClick(token, event) {
+  if (!token.isWord) return;
+
+  if (showPopover.value && popoverToken.value?.index === token.index) {
+    closePopover();
+    return;
+  }
+
+  const rect = event.target.getBoundingClientRect();
+  const spaceBelow = window.innerHeight - rect.bottom;
+
+  popoverToken.value = token;
+  popoverStyle.value = {
+    left: `${rect.left + rect.width / 2}px`,
+    transform: "translateX(-50%)",
+  };
+
+  if (spaceBelow < 100) {
+    popoverStyle.value.top = `${rect.top - 4}px`;
+    popoverStyle.value.transform = "translateX(-50%) translateY(-100%)";
+  } else {
+    popoverStyle.value.top = `${rect.bottom + 4}px`;
+  }
+
+  popoverOpening = true;
+  showPopover.value = true;
+}
+
+function closePopover() {
+  showPopover.value = false;
+  popoverToken.value = null;
+}
+
+function startFromHere() {
+  if (popoverToken.value) {
+    readerStore.setWord(popoverToken.value.index);
+  }
+  closePopover();
+}
+
+function showMeaning() {
+  if (popoverToken.value) {
+    emit("wordClick", popoverToken.value);
+  }
+  closePopover();
+}
+
+function onDocumentClick(event) {
+  if (popoverOpening) {
+    popoverOpening = false;
+    return;
+  }
+
+  if (
+    showPopover.value &&
+    popoverRef.value &&
+    !popoverRef.value.contains(event.target)
+  ) {
+    closePopover();
   }
 }
+
+onMounted(() => {
+  document.addEventListener("click", onDocumentClick);
+});
+
+onUnmounted(() => {
+  document.removeEventListener("click", onDocumentClick);
+});
 
 function isDark(color) {
   const c = color.substring(1);
@@ -72,10 +142,19 @@ function isDark(color) {
     letterSpacing: configStore.letterSpacing + 'em',
   }">
     <div class="text-content">
-      <span v-for="token in visibleTokens" :key="token.index" :class="{ word: token.isWord, highlight: token.isWord && readerStore.currentWordIndex === token.index }" @click="handleClick(token)">
+      <span v-for="token in visibleTokens" :key="token.index" :class="{ word: token.isWord, highlight: token.isWord && readerStore.currentWordIndex === token.index }" @click="handleClick(token, $event)">
         {{ token.text }}
       </span>
       <div aria-hidden="true" class="spacer"></div>
+    </div>
+    <div
+      v-if="showPopover"
+      ref="popoverRef"
+      class="word-popover"
+      :style="popoverStyle"
+    >
+      <button @click="startFromHere">🔊 Iniciar daqui</button>
+      <button @click="showMeaning">📖 Significado</button>
     </div>
   </div>
 </template>
@@ -115,5 +194,37 @@ function isDark(color) {
 .highlight {
   background-color: var(--highlight);
   border-radius: 2px;
+}
+
+.word-popover {
+  position: fixed;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  white-space: nowrap;
+}
+
+.word-popover button {
+  width: 100%;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  background: none;
+  color: #333;
+  font-size: 13px;
+  font-family: Arial, Helvetica, sans-serif;
+  cursor: pointer;
+  text-align: left;
+  transition: background-color 0.15s ease;
+}
+
+.word-popover button:hover {
+  background-color: #f0f0f0;
 }
 </style>
