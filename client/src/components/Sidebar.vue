@@ -1,7 +1,23 @@
 <script setup>
+import { onMounted, onUnmounted } from 'vue';
 import { useConfigStore } from '@/stores/config';
+import { useReaderStore } from '@/stores/reader';
 
 const configStore = useConfigStore();
+const readerStore = useReaderStore();
+
+function loadVoices() {
+  readerStore.loadVoices();
+}
+
+onMounted(() => {
+  loadVoices();
+  window.speechSynthesis.onvoiceschanged = loadVoices;
+});
+
+onUnmounted(() => {
+  window.speechSynthesis.onvoiceschanged = null;
+});
 </script>
 
 <template>
@@ -98,20 +114,25 @@ const configStore = useConfigStore();
                 <input type="range" min="0.5" max="2" step="0.1" v-model="configStore.speed" />
             </div>
 
-            <!-- TODO: Seleção de vozes -->
             <div class="reading-control">
                 <label for="vozes">Voz</label>
 
-                <select id="vozes"></select>
+                <select id="vozes" v-model="readerStore.selectedVoiceURI">
+                    <option value="" disabled>Selecione uma voz</option>
+                    <option v-for="v in readerStore.voices" :key="v.voiceURI" :value="v.voiceURI">
+                        {{ v.name }}
+                    </option>
+                </select>
             </div>
 
-            <!-- TODO: state do reader -->
             <div class="reading-control">
                 <label>Controles</label>
 
                 <div class="buttons">
-                    <button id="playButton">▶️</button>
-                    <button id="pauseButton">⏸️ Pausar</button>
+                    <button @click="readerStore.togglePlay()">
+                        {{ readerStore.isPlaying && !readerStore.isPaused ? '⏸️' : '▶️' }}
+                    </button>
+                    <button @click="readerStore.stop()">⏹️ Parar</button>
                 </div>
             </div>
         </div>

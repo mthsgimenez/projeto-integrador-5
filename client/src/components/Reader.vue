@@ -2,9 +2,11 @@
 import { computed } from "vue";
 import { useConfigStore } from "@/stores/config";
 import { useTextStore } from "@/stores/text";
+import { useReaderStore } from "@/stores/reader";
 
 const textStore = useTextStore();
 const configStore = useConfigStore();
+const readerStore = useReaderStore();
 
 const emit = defineEmits(["wordClick"]);
 
@@ -36,6 +38,7 @@ const visibleTokens = computed(() => {
 function handleClick(token) {
   if (token.isWord) {
     emit("wordClick", token);
+    readerStore.setWord(token.index);
   }
 }
 
@@ -57,6 +60,9 @@ function isDark(color) {
     '--hover': isDark(configStore.backgroundColor)
       ? 'rgba(255,255,255,0.15)'
       : 'rgba(0,0,0,0.15)',
+    '--highlight': isDark(configStore.backgroundColor)
+      ? 'rgba(255,220,50,0.5)'
+      : 'rgba(255,200,0,0.5)',
 
     color: configStore.fontColor,
     backgroundColor: configStore.backgroundColor,
@@ -66,7 +72,7 @@ function isDark(color) {
     letterSpacing: configStore.letterSpacing + 'em',
   }">
     <div class="text-content">
-      <span v-for="token in visibleTokens" :key="token.index" :class="{ word: token.isWord }" @click="handleClick(token)">
+      <span v-for="token in visibleTokens" :key="token.index" :class="{ word: token.isWord, highlight: token.isWord && readerStore.currentWordIndex === token.index }" @click="handleClick(token)">
         {{ token.text }}
       </span>
       <div aria-hidden="true" class="spacer"></div>
@@ -104,5 +110,10 @@ function isDark(color) {
 
 .spacer {
   height: 3em;
+}
+
+.highlight {
+  background-color: var(--highlight);
+  border-radius: 2px;
 }
 </style>
