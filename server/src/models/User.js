@@ -12,9 +12,11 @@ const TextoSchema = new mongoose.Schema({
 const ConfigSchema = new mongoose.Schema({
   espacoLinha: Number,
   espacoPalavra: Number,
+  espacoLetra: Number,
   tamanhoFonte: Number,
   corFundo: String,
   corFonte: String,
+  corDestaque: String,
   velocidadeVoz: Number,
   nomeFonte: String
 }, { _id: false });

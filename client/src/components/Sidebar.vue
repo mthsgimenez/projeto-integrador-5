@@ -1,9 +1,11 @@
 <script setup>
 import { onMounted, onUnmounted } from 'vue';
-import { useConfigStore } from '@/stores/config';
+import { usePreferencesStore } from '@/stores/preferences';
+import { usePaginationStore } from '@/stores/pagination';
 import { useReaderStore } from '@/stores/reader';
 
-const configStore = useConfigStore();
+const preferencesStore = usePreferencesStore();
+const paginationStore = usePaginationStore();
 const readerStore = useReaderStore();
 
 function loadVoices() {
@@ -29,44 +31,44 @@ onUnmounted(() => {
 
             <div class="control">
                 <label>Linhas</label>
-                <label>{{ configStore.lineHeight }}</label>
+                <label>{{ preferencesStore.lineHeight }}</label>
                 <div>
-                    <button @click="configStore.decreaseLineHeight()">-</button>
-                    <button @click="configStore.increaseLineHeight()">+</button>
+                    <button @click="preferencesStore.decreaseLineHeight()">-</button>
+                    <button @click="preferencesStore.increaseLineHeight()">+</button>
                 </div>
             </div>
 
             <div class="control">
                 <label>Palavras</label>
-                <label>{{ configStore.wordSpacing }}</label>
+                <label>{{ preferencesStore.wordSpacing }}</label>
                 <div>
-                    <button @click="configStore.decreaseWordSpacing()">-</button>
-                    <button @click="configStore.increaseWordSpacing()">+</button>
+                    <button @click="preferencesStore.decreaseWordSpacing()">-</button>
+                    <button @click="preferencesStore.increaseWordSpacing()">+</button>
                 </div>
             </div>
 
             <div class="control">
                 <label>Letras</label>
-                <label>{{ configStore.letterSpacing }}</label>
+                <label>{{ preferencesStore.letterSpacing }}</label>
                 <div>
-                    <button @click="configStore.decreaseLetterSpacing()">-</button>
-                    <button @click="configStore.increaseLetterSpacing()">+</button>
+                    <button @click="preferencesStore.decreaseLetterSpacing()">-</button>
+                    <button @click="preferencesStore.increaseLetterSpacing()">+</button>
                 </div>
             </div>
 
             <div class="control">
                 <label>Tamanho</label>
-                <label>{{ configStore.fontScale }}x</label>
+                <label>{{ preferencesStore.fontScale }}x</label>
                 <div>
-                    <button @click="configStore.decreaseFontScale()">-</button>
-                    <button @click="configStore.increaseFontScale()">+</button>
+                    <button @click="preferencesStore.decreaseFontScale()">-</button>
+                    <button @click="preferencesStore.increaseFontScale()">+</button>
                 </div>
             </div>
 
             <div class="control">
                 <label>N de palavras</label>
-                <input type="number" min="1" v-model="configStore.maxWords" />
-                <button @click="readerStore.stop(); configStore.clearMaxWords(); configStore.resetScroll();"
+                <input type="number" min="1" v-model="paginationStore.maxWords" />
+                <button @click="readerStore.stop(); paginationStore.clearMaxWords(); paginationStore.resetScroll();"
                     style="width: 64px;">Limpar</button>
             </div>
 
@@ -74,8 +76,8 @@ onUnmounted(() => {
                 <label>Navegação</label>
 
                 <div>
-                    <button @click="readerStore.stop(); configStore.decreaseScroll()">⬅</button>
-                    <button @click="readerStore.stop(); configStore.increaseScroll()">➡</button>
+                    <button @click="readerStore.stop(); paginationStore.decreaseScroll()">⬅</button>
+                    <button @click="readerStore.stop(); paginationStore.increaseScroll()">➡</button>
                 </div>
             </div>
         </div>
@@ -87,7 +89,7 @@ onUnmounted(() => {
             <div class="appearance-control">
                 <label>Fonte</label>
 
-                <select id="fontSelector">
+                <select id="fontSelector" v-model="preferencesStore.fontFamily">
                     <option value="Arial">Normal</option>
                     <option value="Verdana">Verdana</option>
                 </select>
@@ -96,19 +98,19 @@ onUnmounted(() => {
             <div class="appearance-control">
                 <label>Cor de fundo</label>
 
-                <input type="color" v-model="configStore.backgroundColor" />
+                <input type="color" v-model="preferencesStore.backgroundColor" />
             </div>
 
             <div class="appearance-control">
                 <label>Cor da fonte</label>
 
-                <input type="color" v-model="configStore.fontColor" />
+                <input type="color" v-model="preferencesStore.fontColor" />
             </div>
 
             <div class="appearance-control">
                 <label>Cor do destaque</label>
 
-                <input type="color" v-model="configStore.highlightColor" />
+                <input type="color" v-model="preferencesStore.highlightColor" />
             </div>
         </div>
 
@@ -118,7 +120,7 @@ onUnmounted(() => {
             <div class="reading-control">
                 <label for="velocidade">Velocidade</label>
 
-                <input type="range" min="0.5" max="2" step="0.1" v-model="configStore.speed" />
+                <input type="range" min="0.5" max="2" step="0.1" v-model="preferencesStore.speed" />
             </div>
 
             <div class="reading-control">

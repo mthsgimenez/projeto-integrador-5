@@ -1,17 +1,19 @@
 <script setup>
 import { computed, ref, onMounted, onUnmounted } from "vue";
-import { useConfigStore } from "@/stores/config";
+import { usePreferencesStore } from "@/stores/preferences";
+import { usePaginationStore } from "@/stores/pagination";
 import { useTextStore } from "@/stores/text";
 import { useReaderStore } from "@/stores/reader";
 
 const textStore = useTextStore();
-const configStore = useConfigStore();
+const preferencesStore = usePreferencesStore();
+const paginationStore = usePaginationStore();
 const readerStore = useReaderStore();
 
 const emit = defineEmits(["wordClick"]);
 
 const visibleTokens = computed(() => {
-  if (!configStore.maxWords) {
+  if (!paginationStore.maxWords) {
     return textStore.tokens;
   }
 
@@ -20,14 +22,14 @@ const visibleTokens = computed(() => {
   return textStore.tokens.filter(token => {
     if (!token.isWord) {
       return (
-        wordIndex >= configStore.startIndex &&
-        wordIndex < configStore.startIndex + configStore.maxWords
+        wordIndex >= paginationStore.startIndex &&
+        wordIndex < paginationStore.startIndex + paginationStore.maxWords
       );
     }
 
     const visible =
-      wordIndex >= configStore.startIndex &&
-      wordIndex < configStore.startIndex + configStore.maxWords;
+      wordIndex >= paginationStore.startIndex &&
+      wordIndex < paginationStore.startIndex + paginationStore.maxWords;
 
     wordIndex++;
 
@@ -125,19 +127,19 @@ function isDark(color) {
 
 <template>
   <div class="text-wrapper" :style="{
-    '--bg': configStore.backgroundColor,
-    '--fg': configStore.fontColor,
-    '--hover': isDark(configStore.backgroundColor)
+    '--bg': preferencesStore.backgroundColor,
+    '--fg': preferencesStore.fontColor,
+    '--hover': isDark(preferencesStore.backgroundColor)
       ? 'rgba(255,255,255,0.15)'
       : 'rgba(0,0,0,0.15)',
-    '--highlight': configStore.highlightColor,
+    '--highlight': preferencesStore.highlightColor,
 
-    color: configStore.fontColor,
-    backgroundColor: configStore.backgroundColor,
-    fontSize: configStore.fontScale + 'em',
-    lineHeight: configStore.lineHeight + 'em',
-    wordSpacing: configStore.wordSpacing + 'em',
-    letterSpacing: configStore.letterSpacing + 'em',
+    color: preferencesStore.fontColor,
+    backgroundColor: preferencesStore.backgroundColor,
+    fontSize: preferencesStore.fontScale + 'em',
+    lineHeight: preferencesStore.lineHeight + 'em',
+    wordSpacing: preferencesStore.wordSpacing + 'em',
+    letterSpacing: preferencesStore.letterSpacing + 'em',
   }">
     <div class="text-content">
       <span v-for="token in visibleTokens" :key="token.index" :class="{ word: token.isWord, highlight: token.isWord && readerStore.currentWordIndex === token.index }" @click="handleClick(token, $event)">

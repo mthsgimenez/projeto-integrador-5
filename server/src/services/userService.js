@@ -12,11 +12,13 @@ const createUser = async ({ email, senha, nome }) => {
     hashSenha,
     nome,
     configs: {
-      espacoLinha: 1.5,
-      espacoPalavra: 0.2,
-      tamanhoFonte: 16,
-      corFundo: "#FFFFFF",
-      corFonte: "#000000",
+      espacoLinha: 1.6,
+      espacoPalavra: 0,
+      espacoLetra: 0,
+      tamanhoFonte: 1.6,
+      corFundo: "#d6c8bd",
+      corFonte: "#2E2E2E",
+      corDestaque: "#ffdc32",
       velocidadeVoz: 1,
       nomeFonte: "Arial"
     },

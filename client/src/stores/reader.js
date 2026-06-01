@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { useTextStore } from "./text";
-import { useConfigStore } from "./config";
+import { usePaginationStore } from "./pagination";
+import { usePreferencesStore } from "./preferences";
 
 export const useReaderStore = defineStore("reader", {
   state: () => ({
@@ -24,17 +25,17 @@ export const useReaderStore = defineStore("reader", {
 
     getVisibleWordTokens() {
       const textStore = useTextStore();
-      const configStore = useConfigStore();
+      const paginationStore = usePaginationStore();
       const tokens = textStore.tokens;
 
       const words = tokens.filter(t => t.isWord);
 
-      if (!configStore.maxWords || configStore.maxWords === Infinity) {
+      if (!paginationStore.maxWords || paginationStore.maxWords === Infinity) {
         return words;
       }
 
-      const start = configStore.startIndex;
-      const end = start + configStore.maxWords;
+      const start = paginationStore.startIndex;
+      const end = start + paginationStore.maxWords;
       return words.slice(start, end);
     },
 
@@ -76,7 +77,7 @@ export const useReaderStore = defineStore("reader", {
       const utterance = new SpeechSynthesisUtterance(token.text);
       const voice = this.voices.find(v => v.voiceURI === this.selectedVoiceURI);
       if (voice) utterance.voice = voice;
-      utterance.rate = useConfigStore().speed;
+      utterance.rate = usePreferencesStore().speed;
       utterance.lang = "pt-BR";
 
       utterance.onend = () => {
@@ -93,16 +94,16 @@ export const useReaderStore = defineStore("reader", {
     },
 
     _tryAdvancePage() {
-      const configStore = useConfigStore();
+      const paginationStore = usePaginationStore();
       const textStore = useTextStore();
 
-      if (!configStore.maxWords || configStore.maxWords === Infinity) return false;
+      if (!paginationStore.maxWords || paginationStore.maxWords === Infinity) return false;
 
       const allWords = textStore.tokens.filter(t => t.isWord);
-      const nextStart = configStore.startIndex + configStore.maxWords;
+      const nextStart = paginationStore.startIndex + paginationStore.maxWords;
       if (nextStart >= allWords.length) return false;
 
-      configStore.startIndex = nextStart;
+      paginationStore.startIndex = nextStart;
       const nextWords = this.getVisibleWordTokens();
       if (nextWords.length === 0) return false;
 

@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import { usePreferencesStore } from './preferences'
 
 const API_BASE = import.meta.env.VITE_API_BASE
 
@@ -72,6 +73,8 @@ export const useUserStore = defineStore('user', () => {
       token.value = data.token
       localStorage.setItem('authToken', data.token)
       localStorage.setItem('user', JSON.stringify(data.user))
+      const preferencesStore = usePreferencesStore()
+      preferencesStore.loadFromUser(data.user)
       return data
     } catch (err) {
       error.value = err.message

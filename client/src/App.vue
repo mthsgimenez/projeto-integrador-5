@@ -4,6 +4,7 @@ import { RouterLink, RouterView } from 'vue-router'
 import LoginModal from '@/components/LoginModal.vue'
 import RegisterModal from '@/components/RegisterModal.vue'
 import { useUserStore } from '@/stores/user'
+import { usePreferencesStore } from '@/stores/preferences'
 
 const userStore = useUserStore()
 const showLoginModal = ref(false)
@@ -26,6 +27,7 @@ const closeModals = () => {
 
 const handleLogout = () => {
   userStore.logout()
+  usePreferencesStore().resetToDefaults()
 }
 
 onMounted(() => {
