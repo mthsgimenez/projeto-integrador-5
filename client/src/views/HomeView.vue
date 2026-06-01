@@ -18,7 +18,7 @@ async function validate() {
   error.value = '';
 
   try {
-    const res = await axios.post("http://localhost:3000/api/read", { text: text.value });
+    const res = await axios.post(`${import.meta.env.VITE_API_BASE}/read`, { text: text.value });
 
     if (res.status === 200) {
       textStore.setTokens(res.data);

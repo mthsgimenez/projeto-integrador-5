@@ -20,7 +20,7 @@ async function handleWordClick(token) {
 
   try {
     const res = await axios.get(
-      `http://localhost:3000/api/word/${encodeURIComponent(token.text)}`
+      `${import.meta.env.VITE_API_BASE}/word/${encodeURIComponent(token.text)}`
     );
     definitions.value = res.data.definitions;
   } catch {
