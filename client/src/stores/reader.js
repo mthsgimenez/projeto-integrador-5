@@ -64,10 +64,8 @@ export const useReaderStore = defineStore("reader", {
 
     _speakWord(words, pos) {
       if (pos >= words.length) {
-        this.isPlaying = false;
-        this.isPaused = false;
-        this.currentWordIndex = null;
-        this.currentWordPos = null;
+        if (this._tryAdvancePage()) return;
+        this._resetReadingState();
         return;
       }
 
@@ -88,13 +86,37 @@ export const useReaderStore = defineStore("reader", {
 
       utterance.onerror = () => {
         if (this._cancelRequested) return;
-        this.isPlaying = false;
-        this.isPaused = false;
-        this.currentWordIndex = null;
-        this.currentWordPos = null;
+        this._resetReadingState();
       };
 
       window.speechSynthesis.speak(utterance);
+    },
+
+    _tryAdvancePage() {
+      const configStore = useConfigStore();
+      const textStore = useTextStore();
+
+      if (!configStore.maxWords || configStore.maxWords === Infinity) return false;
+
+      const allWords = textStore.tokens.filter(t => t.isWord);
+      const nextStart = configStore.startIndex + configStore.maxWords;
+      if (nextStart >= allWords.length) return false;
+
+      configStore.startIndex = nextStart;
+      const nextWords = this.getVisibleWordTokens();
+      if (nextWords.length === 0) return false;
+
+      this.currentWordPos = 0;
+      this.currentWordIndex = nextWords[0].index;
+      this._speakWord(nextWords, 0);
+      return true;
+    },
+
+    _resetReadingState() {
+      this.isPlaying = false;
+      this.isPaused = false;
+      this.currentWordIndex = null;
+      this.currentWordPos = null;
     },
 
     pause() {
@@ -108,10 +130,7 @@ export const useReaderStore = defineStore("reader", {
     stop() {
       this._cancelRequested = true;
       window.speechSynthesis.cancel();
-      this.isPlaying = false;
-      this.isPaused = false;
-      this.currentWordIndex = null;
-      this.currentWordPos = null;
+      this._resetReadingState();
     },
 
     togglePlay() {
