@@ -13,6 +13,7 @@ export const useConfigStore = defineStore('config', {
         fontScale: 1.6,
         backgroundColor: "#d6c8bd",
         fontColor: "#2E2E2E",
+        highlightColor: "#ffdc32",
         fontFamily: "Arial",
         speed: 1,
         maxWords: Infinity,

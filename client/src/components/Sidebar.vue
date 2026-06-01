@@ -7,16 +7,16 @@ const configStore = useConfigStore();
 const readerStore = useReaderStore();
 
 function loadVoices() {
-  readerStore.loadVoices();
+    readerStore.loadVoices();
 }
 
 onMounted(() => {
-  loadVoices();
-  window.speechSynthesis.onvoiceschanged = loadVoices;
+    loadVoices();
+    window.speechSynthesis.onvoiceschanged = loadVoices;
 });
 
 onUnmounted(() => {
-  window.speechSynthesis.onvoiceschanged = null;
+    window.speechSynthesis.onvoiceschanged = null;
 });
 </script>
 
@@ -66,7 +66,8 @@ onUnmounted(() => {
             <div class="control">
                 <label>N de palavras</label>
                 <input type="number" min="1" v-model="configStore.maxWords" />
-                <button @click="readerStore.stop(); configStore.clearMaxWords(); configStore.resetScroll();" style="width: 64px;">Limpar</button>
+                <button @click="readerStore.stop(); configStore.clearMaxWords(); configStore.resetScroll();"
+                    style="width: 64px;">Limpar</button>
             </div>
 
             <div class="control">
@@ -102,6 +103,12 @@ onUnmounted(() => {
                 <label>Cor da fonte</label>
 
                 <input type="color" v-model="configStore.fontColor" />
+            </div>
+
+            <div class="appearance-control">
+                <label>Cor do destaque</label>
+
+                <input type="color" v-model="configStore.highlightColor" />
             </div>
         </div>
 
