@@ -47,7 +47,8 @@ async function validate() {
 <style scoped>
 textarea {
   width: 100%;
-  height: 150px;
+  height: min(50vh, 400px);
+  min-height: 150px;
   padding: 10px;
   font-size: 16px;
   border: 1px solid #ccc;
@@ -63,5 +64,29 @@ main {
 
 h3 {
   margin-bottom: 14px;
+}
+
+@media (max-width: 600px) {
+  main {
+    display: flex;
+    flex-direction: column;
+    height: calc(100dvh - 56px);
+    padding: 12px;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  textarea {
+    flex: 1;
+    height: auto;
+  }
+
+  button[type="submit"] {
+    width: 100%;
+  }
 }
 </style>

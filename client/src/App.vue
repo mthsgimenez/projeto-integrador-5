@@ -71,6 +71,8 @@ header {
   align-items: center;
   font-size: 24px;
   font-weight: bold;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .auth-buttons {
@@ -112,5 +114,24 @@ header {
 
 .btn-logout:hover {
   background-color: #c0392b;
+}
+
+@media (max-width: 480px) {
+  header {
+    padding: 12px 16px;
+  }
+
+  .header-content {
+    font-size: 18px;
+  }
+
+  .btn {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+
+  .auth-buttons {
+    gap: 6px;
+  }
 }
 </style>

@@ -91,6 +91,13 @@ const switchForm = () => {
     font-family: Arial, Helvetica, sans-serif;
 }
 
+@media (max-width: 480px) {
+    .modal-content {
+        padding: 20px;
+        max-width: calc(100vw - 24px);
+    }
+}
+
 .close-btn {
     position: absolute;
     top: 12px;

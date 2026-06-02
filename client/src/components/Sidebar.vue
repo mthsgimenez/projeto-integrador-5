@@ -5,6 +5,12 @@ import { usePaginationStore } from '@/stores/pagination';
 import { useReaderStore } from '@/stores/reader';
 import { useUserStore } from '@/stores/user';
 
+defineProps({
+  open: Boolean
+})
+
+const emit = defineEmits(['close'])
+
 const preferencesStore = usePreferencesStore();
 const paginationStore = usePaginationStore();
 const readerStore = useReaderStore();
@@ -55,7 +61,10 @@ onUnmounted(() => {
 </script>
 
 <template>
-    <aside class="sidebar">
+    <div v-if="open" class="sidebar-backdrop" @click="emit('close')"></div>
+    <aside class="sidebar" :class="{ open }">
+        <div class="sheet-handle"></div>
+        <button class="sidebar-close" @click="emit('close')">✕</button>
         <h2>Configurações</h2>
 
         <div class="group">
@@ -216,6 +225,10 @@ h2 {
     margin-bottom: 14px;
 }
 
+.sidebar-backdrop {
+    display: none;
+}
+
 .sidebar {
     width: 284px;
     height: 100vh;
@@ -225,6 +238,135 @@ h2 {
 
     background: var(--color-text);
     color: white;
+}
+
+.sidebar-close {
+    display: none;
+}
+
+.sheet-handle {
+    display: none;
+}
+
+/* BOTTOM SHEET — < 768px */
+@media (max-width: 767px) {
+    .sidebar-backdrop {
+        display: block;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 99;
+    }
+
+    .sidebar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        max-height: 55vh;
+        border-radius: 16px 16px 0 0;
+        z-index: 100;
+        transform: translateY(100%);
+        transition: transform 0.3s ease;
+        padding-top: 12px;
+    }
+
+    .sidebar.open {
+        transform: translateY(0);
+    }
+
+    .sidebar-close {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        width: 36px;
+        height: 36px;
+        background: rgba(255, 255, 255, 0.15);
+        border: none;
+        border-radius: 6px;
+        color: white;
+        font-size: 18px;
+        cursor: pointer;
+    }
+
+    .sidebar-close:hover {
+        background: rgba(255, 255, 255, 0.25);
+    }
+
+    .sheet-handle {
+        display: block;
+        width: 40px;
+        height: 4px;
+        border-radius: 2px;
+        background: rgba(255, 255, 255, 0.3);
+        margin: 0 auto 16px;
+        flex-shrink: 0;
+    }
+}
+
+/* LEFT DRAWER — 768px a 1024px */
+@media (min-width: 768px) and (max-width: 1024px) {
+    .sidebar-backdrop {
+        display: block;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 99;
+    }
+
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 100;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+    }
+
+    .sidebar-close {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        width: 36px;
+        height: 36px;
+        background: rgba(255, 255, 255, 0.15);
+        border: none;
+        border-radius: 6px;
+        color: white;
+        font-size: 18px;
+        cursor: pointer;
+    }
+
+    .sidebar-close:hover {
+        background: rgba(255, 255, 255, 0.25);
+    }
+}
+
+@media (min-width: 1025px) {
+    .sidebar-backdrop {
+        display: none !important;
+    }
+
+    .sidebar {
+        position: static;
+        transform: none;
+        transition: none;
+    }
+
+    .sidebar-close {
+        display: none;
+    }
 }
 
 /* SECTIONS */
@@ -278,6 +420,13 @@ button:hover {
     width: 32px;
     height: 32px;
     padding: 0;
+}
+
+@media (max-width: 768px) {
+    .control button {
+        width: 40px;
+        height: 40px;
+    }
 }
 
 /* APPEARANCE + READING SHARED STYLE */
