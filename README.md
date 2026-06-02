@@ -1,73 +1,33 @@
 # Projeto Integrador 5
 
-## Environment Variables
+## Variáveis de ambiente
 
-### Client (`import.meta.env.VITE_*`)
-
-|     Variable    |          Description         |
-|-----------------|------------------------------|
-| `VITE_API_BASE` | Base URL for the backend API |
-
-### Server (`process.env.*`)
-
-|   Variable   |            Description           |
-|--------------|----------------------------------|
-|    `PORT`    | Server port                      |
-|  `MONGO_URI` | MongoDB connection string        |
-| `JWT_SECRET` | Secret key for JWT token signing |
-
-### Notes
-
-- Client env vars must be prefixed with `VITE_` to be exposed by Vite.
-- Copy `client/.env.example` and `server/.env.example` (if available) to `.env` and fill in the values.
+| Variável | Padrão dev | Padrão prod | Desc |
+|--|--|--|--|
+| `VITE_API_BASE` | `/api` | `/api` | Url base que o front utiliza para chamar a API |
+| `PORT` | `3000` | `3000` | Porta que o backend vai escutar |
+| `MONGO_URI` | `mongodb://mongodb:27017/leitura` | | String de conexão mongodb |
+| `JWT_SECRET` | `dev_secret` | | Secret utilizada para assinar os tokens JWT |
+| `CADDY_HTTP_PORT` | `8080` | `80` | Porta que o container caddy vai escutar (HTTP) |
+| `CADDY_HTTPS_PORT` | `4433` | `443` | Porta que o container caddy vai escutar (HTTPS) |
+| `DOMAIN_NAME` | | | Domínio utilizado |
 
 ## Docker
 
-### Pré-requisitos
-
-- Docker e Docker Compose instalados
-
-### Iniciar
+Iniciar
 
 ```bash
 docker compose up --build -d
 ```
 
-Acessar em http://localhost:8080
-
-### Parar
+Parar
 
 ```bash
 docker compose down
 ```
 
-Para remover também o volume do banco de dados:
+Produção (sem mongodb e sem alguns defaults):
 
 ```bash
-docker compose down -v
-```
-
-### Variáveis de ambiente
-
-Configuráveis via `.env` na raiz do projeto:
-
-| Variável | Default | Descrição |
-|---|---|---|
-| `NGINX_PORT` | `8080` | Porta de acesso no host |
-| `MONGO_DB` | `leitura` | Nome do banco MongoDB |
-| `JWT_SECRET` | `dev_secret` | Chave secreta JWT |
-| `VITE_API_BASE` | `/api` | Caminho da API (proxificado pelo nginx) |
-
-Exemplo sobrescrevendo na linha de comando:
-
-```bash
-NGINX_PORT=9090 JWT_SECRET=minha_chave docker compose up --build -d
-```
-
-### Arquitetura
-
-```
-Navegador → :8080 → Nginx (client static files)
-                      ├── /     → serve index.html
-                      └── /api/ → proxy reverso → server:3000 → mongodb:27017
+docker compose -f docker-compose.prod.yml up -d
 ```
