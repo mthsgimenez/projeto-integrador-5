@@ -1,31 +1,49 @@
 const bcrypt = require("bcrypt");
 const User = require("../models/User");
+const AppError = require("../utils/AppError");
+
+const findUserOrThrow = async (userId) => {
+  const user = await User.findById(userId);
+  if (!user) throw new AppError("Usuário não encontrado", 404);
+  return user;
+};
 
 //
 // 👤 Criar usuário
 //
 const createUser = async ({ email, senha, nome }) => {
-  const hashSenha = await bcrypt.hash(senha, 10);
+  try {
+    const hashSenha = await bcrypt.hash(senha, 10);
 
-  const user = new User({
-    email,
-    hashSenha,
-    nome,
-    configs: {
-      espacoLinha: 1.6,
-      espacoPalavra: 0,
-      espacoLetra: 0,
-      tamanhoFonte: 1.6,
-      corFundo: "#d6c8bd",
-      corFonte: "#2E2E2E",
-      corDestaque: "#ffdc32",
-      velocidadeVoz: 1,
-      nomeFonte: "Arial"
-    },
-    textos: []
-  });
+    const user = new User({
+      email,
+      hashSenha,
+      nome,
+      configs: {
+        espacoLinha: 1.6,
+        espacoPalavra: 0,
+        espacoLetra: 0,
+        tamanhoFonte: 1.6,
+        corFundo: "#d6c8bd",
+        corFonte: "#2E2E2E",
+        corDestaque: "#ffdc32",
+        velocidadeVoz: 1,
+        nomeFonte: "Arial"
+      },
+      textos: []
+    });
 
-  return user.save();
+    return user.save();
+  } catch (err) {
+    if (err.code === 11000) {
+      throw new AppError("Este e-mail já está cadastrado", 400);
+    }
+    if (err.name === "ValidationError") {
+      const campos = Object.keys(err.errors).join(", ");
+      throw new AppError(`Dados inválidos: ${campos}`, 400);
+    }
+    throw err;
+  }
 };
 
 //
@@ -33,10 +51,10 @@ const createUser = async ({ email, senha, nome }) => {
 //
 const login = async ({ email, senha }) => {
   const user = await User.findOne({ email });
-  if (!user) throw new Error("Usuário não encontrado");
+  if (!user) throw new AppError("Usuário não encontrado", 401);
 
   const match = await bcrypt.compare(senha, user.hashSenha);
-  if (!match) throw new Error("Senha inválida");
+  if (!match) throw new AppError("Senha inválida", 401);
 
   return user;
 };
@@ -44,14 +62,15 @@ const login = async ({ email, senha }) => {
 //
 // 🔍 Buscar usuário
 //
-const getUserById = (id) => {
-  return User.findById(id);
+const getUserById = async (id) => {
+  return findUserOrThrow(id);
 };
 
 //
 // ⚙️ Atualizar configs
 //
-const updateConfigs = (id, configs) => {
+const updateConfigs = async (id, configs) => {
+  await findUserOrThrow(id);
   return User.findByIdAndUpdate(
     id,
     { configs },
@@ -63,7 +82,7 @@ const updateConfigs = (id, configs) => {
 // 📚 Criar texto
 //
 const addTexto = async (userId, { titulo, conteudo }) => {
-  const user = await User.findById(userId);
+  const user = await findUserOrThrow(userId);
 
   user.textos.push({ titulo, conteudo });
   await user.save();
@@ -75,7 +94,7 @@ const addTexto = async (userId, { titulo, conteudo }) => {
 // 📄 Listar textos
 //
 const getTextos = async (userId) => {
-  const user = await User.findById(userId);
+  const user = await findUserOrThrow(userId);
   return user.textos;
 };
 
@@ -83,10 +102,10 @@ const getTextos = async (userId) => {
 // ✏️ Atualizar texto
 //
 const updateTexto = async (userId, textoId, data) => {
-  const user = await User.findById(userId);
+  const user = await findUserOrThrow(userId);
   const texto = user.textos.id(textoId);
 
-  if (!texto) throw new Error("Texto não encontrado");
+  if (!texto) throw new AppError("Texto não encontrado", 404);
 
   texto.titulo = data.titulo ?? texto.titulo;
   texto.conteudo = data.conteudo ?? texto.conteudo;
@@ -100,10 +119,10 @@ const updateTexto = async (userId, textoId, data) => {
 // ❌ Remover texto
 //
 const deleteTexto = async (userId, textoId) => {
-  const user = await User.findById(userId);
+  const user = await findUserOrThrow(userId);
 
   const texto = user.textos.id(textoId);
-  if (!texto) throw new Error("Texto não encontrado");
+  if (!texto) throw new AppError("Texto não encontrado", 404);
 
   texto.remove();
   await user.save();

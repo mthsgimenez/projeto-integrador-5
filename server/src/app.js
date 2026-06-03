@@ -12,4 +12,11 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/api", routes);
 
+app.use((err, req, res, next) => {
+  console.error("Erro interno:", err);
+  const statusCode = err.isOperational ? err.statusCode : 500;
+  const message = err.isOperational ? err.message : "Erro interno do servidor";
+  res.status(statusCode).json({ erro: message });
+});
+
 module.exports = app;

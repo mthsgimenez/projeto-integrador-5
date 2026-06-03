@@ -27,8 +27,8 @@ async function handleSave() {
     try {
         await preferencesStore.saveToServer();
         showFeedback('Salvo!');
-    } catch {
-        showFeedback('Erro ao salvar');
+    } catch (e) {
+        showFeedback(e.message || 'Erro ao salvar');
     }
 }
 
@@ -36,8 +36,8 @@ async function handleReload() {
     try {
         await preferencesStore.reloadFromServer();
         showFeedback('Carregado!');
-    } catch {
-        showFeedback('Erro ao carregar');
+    } catch (e) {
+        showFeedback(e.message || 'Erro ao carregar');
     }
 }
 

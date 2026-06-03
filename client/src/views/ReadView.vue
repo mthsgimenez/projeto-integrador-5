@@ -63,8 +63,8 @@ async function handleWordClick(token) {
       `${import.meta.env.VITE_API_BASE}/word/${encodeURIComponent(token.text)}`
     );
     definitions.value = res.data.definitions;
-  } catch {
-    error.value = 'not found';
+  } catch (e) {
+    error.value = e.response?.data?.erro || 'Erro ao buscar significado';
   } finally {
     loading.value = false;
   }

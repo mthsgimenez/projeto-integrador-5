@@ -111,13 +111,19 @@ export const usePreferencesStore = defineStore("preferences", {
             body: JSON.stringify(this.toServerObject()),
           }
         );
-        if (!res.ok) throw new Error("Erro ao salvar configurações");
+        if (!res.ok) {
+          const errorData = await res.json().catch(() => ({}));
+          throw new Error(errorData.erro || "Erro ao salvar configurações");
+        }
         const data = await res.json();
         this.loadFromUser(data);
         if (userStore.user) {
           userStore.user.configs = data.configs;
           localStorage.setItem("user", JSON.stringify(userStore.user));
         }
+      } catch (err) {
+        this.saving = false;
+        throw err;
       } finally {
         this.saving = false;
       }
@@ -137,13 +143,19 @@ export const usePreferencesStore = defineStore("preferences", {
             },
           }
         );
-        if (!res.ok) throw new Error("Erro ao carregar configurações");
+        if (!res.ok) {
+          const errorData = await res.json().catch(() => ({}));
+          throw new Error(errorData.erro || "Erro ao carregar configurações");
+        }
         const data = await res.json();
         this.loadFromUser(data);
         if (userStore.user) {
           userStore.user.configs = data.configs;
           localStorage.setItem("user", JSON.stringify(userStore.user));
         }
+      } catch (err) {
+        this.loading = false;
+        throw err;
       } finally {
         this.loading = false;
       }

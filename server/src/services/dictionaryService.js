@@ -1,5 +1,6 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
+const AppError = require('../utils/AppError');
 
 class DictionaryScraper {
   static baseUrl = "https://www.dicio.com.br/";
@@ -22,7 +23,7 @@ class DictionaryScraper {
 
       return results;
     } catch (err) {
-      console.error("Scraper error:", err);
+      console.error("Erro no scraper do dicionário:", err);
       return [];
     }
   }
@@ -38,7 +39,7 @@ class DictionaryService {
     const definitions = await DictionaryScraper.scrape(normalized);
 
     if (!definitions.length) {
-      throw new Error(`No definitions found for: ${word}`);
+      throw new AppError("Significado não encontrado para esta palavra", 404);
     }
 
     return definitions;

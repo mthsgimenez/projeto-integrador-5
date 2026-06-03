@@ -25,8 +25,7 @@ async function validate() {
       router.push('/read');
     }
   } catch (e) {
-    error.value = "Erro ao enviar texto.";
-    console.log(e);
+    error.value = e.response?.data?.erro || "Erro ao enviar texto.";
   }
 }
 </script>
