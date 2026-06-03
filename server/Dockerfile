@@ -14,6 +14,5 @@ USER node
 HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
   CMD nc -z 127.0.0.1 3000
 LABEL org.opencontainers.image.title="PI5-Server" \
-      org.opencontainers.image.description="Backend API" \
-      org.opencontainers.image.version="1.0.0"
+      org.opencontainers.image.description="Backend API"
 CMD ["node", "src/server.js"]

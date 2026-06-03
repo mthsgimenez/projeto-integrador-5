@@ -13,6 +13,5 @@ COPY Caddyfile /etc/caddy/Caddyfile
 RUN apk add --no-cache netcat-openbsd
 HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
   CMD nc -z 127.0.0.1 80
-LABEL org.opencontainers.image.title="PI5-Client" \
-      org.opencontainers.image.description="Frontend SPA" \
-      org.opencontainers.image.version="1.0.0"
+LABEL org.opencontainers.image.title="Leitura Fácil Client" \
+      org.opencontainers.image.description="Frontend SPA"
