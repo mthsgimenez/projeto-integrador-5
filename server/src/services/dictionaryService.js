@@ -47,5 +47,6 @@ class DictionaryService {
 }
 
 module.exports = {
-  getWordDefinition: DictionaryService.getWordDefinition
+  getWordDefinition: DictionaryService.getWordDefinition,
+  DictionaryService
 };
