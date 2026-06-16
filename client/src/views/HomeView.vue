@@ -7,7 +7,59 @@ import router from '@/router';
 
 const text = ref('');
 const error = ref('');
+const fileInput = ref(null);
 const textStore = useTextStore();
+
+async function pasteFromClipboard() {
+  try {
+    const clipboardText = await navigator.clipboard.readText();
+    if (clipboardText) {
+      text.value += clipboardText;
+    }
+  } catch {
+    error.value = "Não foi possível acessar a área de transferência.";
+  }
+}
+
+function triggerFileUpload() {
+  fileInput.value?.click();
+}
+
+async function handleFileUpload(event) {
+  const file = event.target.files?.[0];
+  if (!file) return;
+
+  error.value = '';
+
+  try {
+    const headText = await file.slice(0, 4096).text();
+
+    if (!isTextContent(headText)) {
+      error.value = "O arquivo selecionado não parece ser um arquivo de texto.";
+      event.target.value = '';
+      return;
+    }
+
+    const fullText = await file.text();
+    text.value += fullText;
+    validate();
+  } catch {
+    error.value = "Erro ao ler o arquivo.";
+  }
+}
+
+function isTextContent(content) {
+  const sample = content.slice(0, 4096);
+  let printable = 0;
+  for (let i = 0; i < sample.length; i++) {
+    const code = sample.charCodeAt(i);
+    if (code === 0) return false;
+    if (code >= 32 && code <= 126) printable++;
+    else if ([9, 10, 13].includes(code)) printable++;
+    else if (code >= 128) printable++;
+  }
+  return sample.length === 0 || (printable / sample.length) > 0.8;
+}
 
 async function validate() {
   if (!text.value.trim()) {
@@ -38,7 +90,12 @@ async function validate() {
 
       <p v-if="error" style="color: red;">{{ error }}</p>
 
-      <button type="submit" style="margin-top: 15px;">Abrir para leitura →</button>
+      <div class="button-group">
+        <button type="button" @click="pasteFromClipboard">📋 Colar</button>
+        <button type="button" @click="triggerFileUpload">📂 Carregar .txt</button>
+        <input type="file" ref="fileInput" accept=".txt" @change="handleFileUpload" hidden />
+        <button type="submit">Abrir para leitura →</button>
+      </div>
     </form>
   </main>
 </template>
@@ -65,6 +122,17 @@ h3 {
   margin-bottom: 14px;
 }
 
+.button-group {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+  align-items: center;
+}
+
+.button-group button[type="submit"] {
+  margin-left: auto;
+}
+
 @media (max-width: 600px) {
   main {
     display: flex;
@@ -84,8 +152,12 @@ h3 {
     height: auto;
   }
 
-  button[type="submit"] {
-    width: 100%;
+  .button-group {
+    flex-wrap: wrap;
+  }
+
+  .button-group button {
+    flex: 1;
   }
 }
 </style>
