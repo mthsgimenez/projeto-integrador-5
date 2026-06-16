@@ -3,7 +3,7 @@ const cheerio = require('cheerio');
 const AppError = require('../utils/AppError');
 
 class DictionaryScraper {
-  static baseUrl = "https://www.dicio.com.br/";
+  static baseUrl = "https://escreva.ai/palavra/";
 
   static async scrape(word) {
     try {
@@ -11,13 +11,10 @@ class DictionaryScraper {
       const response = await axios.get(`${this.baseUrl}${word}`);
       const $ = cheerio.load(response.data);
 
-      $("p.significado span").each((i, el) => {
-        const classe = $(el).attr("class");
-        if (classe === "cl" || classe === "etim") return;
+      const lista = $($("ol")[1]).find("li");
 
-        let texto = $(el).text().trim();
-        texto = texto.replace(/\[.*?\]\s*/g, "");
-
+      lista.each((i, e) => {
+        const texto = $(e).text().trim();
         if (texto) results.push(texto);
       });
 
