@@ -17,11 +17,15 @@ export const usePreferencesStore = defineStore("preferences", {
     highlightColor: "#ffdc32",
     fontFamily: "Arial",
     speed: 1,
+    darkMode: false,
     saving: false,
     loading: false,
   }),
 
   actions: {
+    toggleDarkMode() {
+      this.darkMode = !this.darkMode;
+    },
     increaseLineHeight(step = 0.2) {
       this.lineHeight = round1(this.lineHeight + step);
     },
@@ -66,6 +70,7 @@ export const usePreferencesStore = defineStore("preferences", {
       if (c.corDestaque != null) this.highlightColor = c.corDestaque;
       if (c.nomeFonte != null) this.fontFamily = c.nomeFonte;
       if (c.velocidadeVoz != null) this.speed = c.velocidadeVoz;
+      if (c.modoEscuro != null) this.darkMode = c.modoEscuro;
     },
 
     resetToDefaults() {
@@ -78,6 +83,7 @@ export const usePreferencesStore = defineStore("preferences", {
       this.highlightColor = "#ffdc32";
       this.fontFamily = "Arial";
       this.speed = 1;
+      this.darkMode = false;
     },
 
     toServerObject() {
@@ -91,6 +97,7 @@ export const usePreferencesStore = defineStore("preferences", {
         corDestaque: this.highlightColor,
         nomeFonte: this.fontFamily,
         velocidadeVoz: this.speed,
+        modoEscuro: this.darkMode,
       };
     },
 

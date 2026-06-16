@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import { RouterLink, RouterView } from 'vue-router'
 import LoginModal from '@/components/LoginModal.vue'
 import RegisterModal from '@/components/RegisterModal.vue'
@@ -7,6 +7,7 @@ import { useUserStore } from '@/stores/user'
 import { usePreferencesStore } from '@/stores/preferences'
 
 const userStore = useUserStore()
+const preferencesStore = usePreferencesStore()
 const showLoginModal = ref(false)
 const showRegisterModal = ref(false)
 
@@ -30,8 +31,17 @@ const handleLogout = () => {
   usePreferencesStore().resetToDefaults()
 }
 
+const applyTheme = (dark) => {
+  document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light')
+}
+
+watch(() => preferencesStore.darkMode, (val) => {
+  applyTheme(val)
+})
+
 onMounted(() => {
   userStore.initializeUser()
+  applyTheme(preferencesStore.darkMode)
 })
 </script>
 
@@ -39,6 +49,11 @@ onMounted(() => {
   <header>
     <div class="header-content">
       <RouterLink to="/" style="text-decoration: none; color: inherit;">Leitura Fácil 💚</RouterLink>
+      <div class="header-actions">
+        <button @click="preferencesStore.toggleDarkMode()" class="theme-toggle" :title="preferencesStore.darkMode ? 'Modo claro' : 'Modo escuro'">
+          {{ preferencesStore.darkMode ? '☀️' : '🌙' }}
+        </button>
+      </div>
       <div class="auth-buttons">
         <template v-if="userStore.isLoggedIn()">
           <span class="user-name">{{ userStore.user?.nome }}</span>
@@ -74,6 +89,26 @@ header {
   font-weight: bold;
   flex-wrap: wrap;
   gap: 8px;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+}
+
+.theme-toggle {
+  background: none;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  padding: 4px 8px;
+  line-height: 1;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.theme-toggle:hover {
+  background-color: rgba(0, 0, 0, 0.08);
 }
 
 .auth-buttons {

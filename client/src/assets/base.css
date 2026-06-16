@@ -37,6 +37,39 @@
   --section-gap: 160px;
 }
 
+[data-theme="dark"] {
+  color-scheme: dark;
+  --color-background: #181818;
+  --color-background-darker: #121212;
+
+  --color-header: #2A2A2A;
+  --color-button: #7A7A7A;
+  --color-button-hover: #888888;
+
+  --color-text: #E0E0E0;
+  --color-text-muted: #999999;
+
+  --color-surface: #222222;
+
+  --color-border: #333333;
+  --color-border-light: #3A3A3A;
+
+  --color-danger: #D47A74;
+  --color-danger-hover: #C46A64;
+  --color-danger-light: #3D2020;
+  --color-danger-light-hover: #4A2828;
+
+  --color-success: #6AAC84;
+  --color-success-hover: #7ABC94;
+
+  --color-error: #D46666;
+  --color-error-background: #2D1818;
+  --color-error-border: #422222;
+
+  --color-overlay: rgba(0, 0, 0, 0.5);
+  --color-glow: rgba(122, 122, 122, 0.15);
+}
+
 *,
 *::before,
 *::after {

@@ -265,8 +265,8 @@ h2 {
     overflow-y: auto;
     flex-shrink: 0;
 
-    background: var(--color-text);
-    color: white;
+    background: var(--color-surface);
+    color: var(--color-text);
 }
 
 .sidebar-close {
@@ -283,7 +283,7 @@ h2 {
         display: block;
         position: fixed;
         inset: 0;
-        background: rgba(0, 0, 0, 0.5);
+        background: var(--color-overlay);
         z-index: 99;
     }
 
@@ -314,16 +314,16 @@ h2 {
         right: 12px;
         width: 36px;
         height: 36px;
-        background: rgba(255, 255, 255, 0.15);
+        background: transparent;
         border: none;
         border-radius: 6px;
-        color: white;
+        color: var(--color-text-muted);
         font-size: 18px;
         cursor: pointer;
     }
 
     .sidebar-close:hover {
-        background: rgba(255, 255, 255, 0.25);
+        background: var(--color-border-light);
     }
 
     .sheet-handle {
@@ -331,7 +331,7 @@ h2 {
         width: 40px;
         height: 4px;
         border-radius: 2px;
-        background: rgba(255, 255, 255, 0.3);
+        background: var(--color-border);
         margin: 0 auto 16px;
         flex-shrink: 0;
     }
@@ -343,7 +343,7 @@ h2 {
         display: block;
         position: fixed;
         inset: 0;
-        background: rgba(0, 0, 0, 0.5);
+        background: var(--color-overlay);
         z-index: 99;
     }
 
@@ -369,16 +369,16 @@ h2 {
         right: 12px;
         width: 36px;
         height: 36px;
-        background: rgba(255, 255, 255, 0.15);
+        background: transparent;
         border: none;
         border-radius: 6px;
-        color: white;
+        color: var(--color-text-muted);
         font-size: 18px;
         cursor: pointer;
     }
 
     .sidebar-close:hover {
-        background: rgba(255, 255, 255, 0.25);
+        background: var(--color-border-light);
     }
 }
 
@@ -433,7 +433,7 @@ button {
     border: none;
     border-radius: 6px;
 
-    background: var(--color-button-dark);
+    background: var(--color-button);
     color: white;
     cursor: pointer;
 
@@ -441,7 +441,7 @@ button {
 }
 
 button:hover {
-    background: var(--color-button-dark-hover);
+    background: var(--color-button-hover);
 }
 
 /* small step buttons */
@@ -504,7 +504,8 @@ input[type="range"] {
     font-size: 13px;
     padding: 6px 12px;
     border-radius: 6px;
-    background-color: rgba(255, 255, 255, 0.15);
+    background-color: var(--color-border-light);
+    color: var(--color-text-muted);
     margin-bottom: 12px;
 }
 
@@ -517,7 +518,7 @@ input[type="range"] {
 .title-input {
     width: 100%;
     padding: 8px 10px;
-    border: none;
+    border: 1px solid var(--color-border-light);
     border-radius: 6px;
     font-size: 14px;
     box-sizing: border-box;
