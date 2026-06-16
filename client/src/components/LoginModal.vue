@@ -73,7 +73,7 @@ const switchForm = () => {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: var(--color-overlay);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -81,7 +81,7 @@ const switchForm = () => {
 }
 
 .modal-content {
-    background-color: white;
+    background-color: var(--color-surface);
     border-radius: 8px;
     padding: 32px;
     width: 100%;
@@ -106,7 +106,7 @@ const switchForm = () => {
     border: none;
     font-size: 24px;
     cursor: pointer;
-    color: #666;
+    color: var(--color-text-muted);
     width: 32px;
     height: 32px;
     display: flex;
@@ -115,19 +115,19 @@ const switchForm = () => {
 }
 
 .close-btn:hover {
-    color: #333;
+    color: var(--color-text);
 }
 
 h2 {
     margin-top: 0;
     margin-bottom: 24px;
-    color: #333;
+    color: var(--color-text);
 }
 
 .error-message {
-    background-color: #fee;
-    color: #c33;
-    border: 1px solid #fcc;
+    background-color: var(--color-error-background);
+    color: var(--color-error);
+    border: 1px solid var(--color-error-border);
     padding: 10px 12px;
     border-radius: 4px;
     margin-bottom: 16px;
@@ -142,14 +142,14 @@ label {
     display: block;
     margin-bottom: 6px;
     font-weight: 600;
-    color: #333;
+    color: var(--color-text);
     font-size: 14px;
 }
 
 input {
     width: 100%;
     padding: 10px 12px;
-    border: 1px solid #ddd;
+    border: 1px solid var(--color-border-light);
     border-radius: 4px;
     font-size: 14px;
     font-family: Arial, Helvetica, sans-serif;
@@ -159,7 +159,7 @@ input {
 input:focus {
     outline: none;
     border-color: var(--color-button-hover);
-    box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.1);
+    box-shadow: 0 0 0 3px var(--color-glow);
 }
 
 .btn-submit {
@@ -186,7 +186,7 @@ input:focus {
     text-align: center;
     margin-top: 16px;
     font-size: 14px;
-    color: #666;
+    color: var(--color-text-muted);
 }
 
 .link-btn {

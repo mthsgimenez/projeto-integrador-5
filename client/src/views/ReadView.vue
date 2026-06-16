@@ -165,7 +165,7 @@ main {
         left: 50%;
         transform: translateX(-50%);
         z-index: 60;
-        background: #fff;
+        background: var(--color-surface);
         padding: 6px 12px;
         border-radius: 12px;
         box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);

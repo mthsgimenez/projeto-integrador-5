@@ -89,7 +89,7 @@ async function validate() {
     <form method="POST" action="/api/read" @submit.prevent="validate">
       <textarea v-model="text" required></textarea>
 
-      <p v-if="error" style="color: red;">{{ error }}</p>
+      <p v-if="error" class="error-text">{{ error }}</p>
 
       <div class="button-group">
         <button type="button" @click="pasteFromClipboard">📋 Colar</button>
@@ -108,7 +108,7 @@ textarea {
   min-height: 150px;
   padding: 10px;
   font-size: 16px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--color-border);
   border-radius: 10px;
   resize: none;
 }
@@ -132,6 +132,10 @@ h3 {
 
 .button-group button[type="submit"] {
   margin-left: auto;
+}
+
+.error-text {
+  color: var(--color-error);
 }
 
 @media (max-width: 600px) {

@@ -40,7 +40,7 @@ const emit = defineEmits(["close"]);
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: var(--color-overlay);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -48,7 +48,7 @@ const emit = defineEmits(["close"]);
 }
 
 .modal-content {
-  background-color: white;
+  background-color: var(--color-surface);
   border-radius: 8px;
   padding: 32px;
   width: 100%;
@@ -75,7 +75,7 @@ const emit = defineEmits(["close"]);
   border: none;
   font-size: 24px;
   cursor: pointer;
-  color: #666;
+  color: var(--color-text-muted);
   width: 32px;
   height: 32px;
   display: flex;
@@ -84,13 +84,13 @@ const emit = defineEmits(["close"]);
 }
 
 .close-btn:hover {
-  color: #333;
+  color: var(--color-text);
 }
 
 h2 {
   margin-top: 0;
   margin-bottom: 20px;
-  color: #333;
+  color: var(--color-text);
   text-transform: lowercase;
 }
 
@@ -102,7 +102,7 @@ h2 {
 .definitions-list li {
   margin-bottom: 10px;
   line-height: 1.5;
-  color: #444;
+  color: var(--color-text);
   font-size: 15px;
 }
 
@@ -112,7 +112,7 @@ h2 {
 
 .status-text {
   text-align: center;
-  color: #666;
+  color: var(--color-text-muted);
   font-size: 15px;
   line-height: 1.5;
 }

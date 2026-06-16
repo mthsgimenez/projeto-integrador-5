@@ -234,11 +234,11 @@ onMounted(() => {
 .empty {
   text-align: center;
   padding: 40px;
-  color: #888;
+  color: var(--color-text-muted);
 }
 
 .error {
-  color: red;
+  color: var(--color-error);
   margin-bottom: 16px;
 }
 
@@ -253,7 +253,7 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
   padding: 14px 16px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--color-border-light);
   border-radius: 10px;
   gap: 12px;
   cursor: pointer;
@@ -261,7 +261,7 @@ onMounted(() => {
 }
 
 .texto-card:hover {
-  background: #f5f5f5;
+  background: var(--color-surface);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
@@ -284,7 +284,7 @@ onMounted(() => {
 
 .texto-data {
   font-size: 13px;
-  color: #888;
+  color: var(--color-text-muted);
   pointer-events: none;
 }
 
@@ -292,7 +292,7 @@ onMounted(() => {
   width: 100%;
   padding: 8px 10px;
   font-size: 15px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--color-border);
   border-radius: 6px;
   box-sizing: border-box;
 }
@@ -313,21 +313,21 @@ onMounted(() => {
 }
 
 .btn-save {
-  background: #27ae60;
+  background: var(--color-success);
   color: white;
 }
 
 .btn-save:hover {
-  background: #219a52;
+  background: var(--color-success-hover);
 }
 
 .btn-cancel {
-  background: #f0f0f0;
-  color: #333;
+  background: var(--color-border-light);
+  color: var(--color-text);
 }
 
 .btn-cancel:hover {
-  background: #ddd;
+  background: var(--color-border);
 }
 
 .menu-btn {
@@ -336,7 +336,7 @@ onMounted(() => {
   border: none;
   border-radius: 50%;
   background: transparent;
-  color: #888;
+  color: var(--color-text-muted);
   font-size: 20px;
   line-height: 1;
   cursor: pointer;
@@ -348,14 +348,14 @@ onMounted(() => {
 }
 
 .menu-btn:hover {
-  background: #e0e0e0;
-  color: #333;
+  background: var(--color-border-light);
+  color: var(--color-text);
 }
 
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.4);
+  background: var(--color-overlay);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -363,7 +363,7 @@ onMounted(() => {
 }
 
 .action-modal {
-  background: #fff;
+  background: var(--color-surface);
   border-radius: 12px;
   padding: 20px;
   min-width: 260px;
@@ -377,7 +377,7 @@ onMounted(() => {
   margin: 0 0 4px;
   font-size: 15px;
   font-weight: 600;
-  color: #333;
+  color: var(--color-text);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -395,31 +395,31 @@ onMounted(() => {
 }
 
 .action-btn:not(.cancel):not(.danger) {
-  background: #f0f0f0;
-  color: #333;
+  background: var(--color-border-light);
+  color: var(--color-text);
 }
 
 .action-btn:not(.cancel):not(.danger):hover {
-  background: #e0e0e0;
+  background: var(--color-border);
 }
 
 .action-btn.danger {
-  background: #ffeaea;
-  color: #c0392b;
+  background: var(--color-danger-light);
+  color: var(--color-danger-hover);
 }
 
 .action-btn.danger:hover {
-  background: #fdd5d5;
+  background: var(--color-danger-light-hover);
 }
 
 .action-btn.cancel {
   background: transparent;
-  color: #888;
+  color: var(--color-text-muted);
   margin-top: 4px;
 }
 
 .action-btn.cancel:hover {
-  background: #f5f5f5;
+  background: var(--color-surface);
 }
 
 @media (max-width: 600px) {

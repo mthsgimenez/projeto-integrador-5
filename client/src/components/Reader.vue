@@ -202,8 +202,8 @@ function isDark(color) {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  background: #fff;
-  border: 1px solid #ddd;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-light);
   border-radius: 8px;
   padding: 4px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -217,7 +217,7 @@ function isDark(color) {
   border: none;
   border-radius: 6px;
   background: none;
-  color: #333;
+  color: var(--color-text);
   font-size: 14px;
   font-family: Arial, Helvetica, sans-serif;
   cursor: pointer;
@@ -226,7 +226,7 @@ function isDark(color) {
 }
 
 .word-popover button:hover {
-  background-color: #f0f0f0;
+  background-color: var(--color-border-light);
 }
 
 @media (max-width: 480px) {

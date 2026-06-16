@@ -120,12 +120,12 @@ header {
 }
 
 .btn-logout {
-  background-color: #e74c3c;
+  background-color: var(--color-danger);
   color: white;
 }
 
 .btn-logout:hover {
-  background-color: #c0392b;
+  background-color: var(--color-danger-hover);
 }
 
 @media (max-width: 480px) {

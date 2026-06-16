@@ -1,16 +1,38 @@
 /* semantic color variables for this project */
 :root {
-  --color-background: #F4F1EA;
-  --color-background-darker: #d6c8bd;
+  --color-background: #F7F5F0;
+  --color-background-darker: #E6DED4;
 
-  --color-header: #A3C9A8;
-  --color-button: #6B8E23;
-  --color-button-hover: #5a7a1d;
+  --color-header: #B7D3BA;
+  --color-button: #7C9A4A;
+  --color-button-hover: #6B853F;
 
-  --color-button-dark: #444;
-  --color-button-dark-hover: #666;
+  --color-button-dark: #4A4A4A;
+  --color-button-dark-hover: #666666;
 
-  --color-text: #2E2E2E;
+  --color-text: #2F2F2F;
+
+  --color-surface: #FFFFFF;
+
+  --color-text-muted: #6F6F6F;
+
+  --color-border: #D8D2CA;
+  --color-border-light: #E7E2DB;
+
+  --color-danger: #D96B63;
+  --color-danger-hover: #C85A52;
+  --color-danger-light: #FBECEC;
+  --color-danger-light-hover: #F6DEDE;
+
+  --color-success: #4FAE74;
+  --color-success-hover: #449B67;
+
+  --color-error: #D45555;
+  --color-error-background: #FDEEEE;
+  --color-error-border: #F6CFCF;
+
+  --color-overlay: rgba(0, 0, 0, 0.35);
+  --color-glow: rgba(124, 154, 74, 0.12);
 
   --section-gap: 160px;
 }
