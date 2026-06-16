@@ -11,6 +11,7 @@ router.get("/users/:id", authMiddleware, userController.getUser);
 router.put("/users/:id/configs", authMiddleware, userController.updateConfigs);
 router.post("/users/:id/textos", authMiddleware, userController.addTexto);
 router.get("/users/:id/textos", authMiddleware, userController.getTextos);
+router.get("/users/:userId/textos/:textoId", authMiddleware, userController.getTexto);
 router.put("/users/:userId/textos/:textoId", authMiddleware, userController.updateTexto);
 router.delete("/users/:userId/textos/:textoId", authMiddleware, userController.deleteTexto);
 

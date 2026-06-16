@@ -82,6 +82,16 @@ const updateTexto = async (req, res, next) => {
   }
 };
 
+const getTexto = async (req, res, next) => {
+  try {
+    if (!req.userId || req.userId !== req.params.userId) return res.status(403).json({ erro: 'Acesso negado' });
+    const texto = await userService.getTexto(req.params.userId, req.params.textoId);
+    res.json(texto);
+  } catch (err) {
+    handleError(err, next);
+  }
+};
+
 const deleteTexto = async (req, res, next) => {
   try {
     if (!req.userId || req.userId !== req.params.userId) return res.status(403).json({ erro: 'Acesso negado' });
@@ -102,6 +112,7 @@ module.exports = {
   updateConfigs,
   addTexto,
   getTextos,
+  getTexto,
   updateTexto,
   deleteTexto
 };

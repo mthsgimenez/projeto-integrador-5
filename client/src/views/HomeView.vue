@@ -74,6 +74,7 @@ async function validate() {
 
     if (res.status === 200) {
       textStore.setTokens(res.data);
+      textStore.setOriginalText(text.value);
       router.push('/read');
     }
   } catch (e) {

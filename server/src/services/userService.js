@@ -87,14 +87,14 @@ const addTexto = async (userId, { titulo, conteudo }) => {
   user.textos.push({ titulo, conteudo });
   await user.save();
 
-  return user.textos;
+  return user.textos[user.textos.length - 1];
 };
 
 //
 // 📄 Listar textos
 //
 const getTextos = async (userId) => {
-  const user = await findUserOrThrow(userId);
+  const user = await User.findById(userId, { 'textos.conteudo': 0 });
   return user.textos;
 };
 
@@ -128,6 +128,13 @@ const deleteTexto = async (userId, textoId) => {
   await user.save();
 };
 
+const getTexto = async (userId, textoId) => {
+  const user = await findUserOrThrow(userId);
+  const texto = user.textos.id(textoId);
+  if (!texto) throw new AppError("Texto não encontrado", 404);
+  return texto;
+};
+
 module.exports = {
   createUser,
   login,
@@ -135,6 +142,7 @@ module.exports = {
   updateConfigs,
   addTexto,
   getTextos,
+  getTexto,
   updateTexto,
   deleteTexto
 };

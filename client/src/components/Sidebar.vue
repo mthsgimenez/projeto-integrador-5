@@ -1,9 +1,11 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
+import axios from 'axios';
 import { usePreferencesStore } from '@/stores/preferences';
 import { usePaginationStore } from '@/stores/pagination';
 import { useReaderStore } from '@/stores/reader';
 import { useUserStore } from '@/stores/user';
+import { useTextStore } from '@/stores/text';
 
 defineProps({
   open: Boolean
@@ -15,8 +17,31 @@ const preferencesStore = usePreferencesStore();
 const paginationStore = usePaginationStore();
 const readerStore = useReaderStore();
 const userStore = useUserStore();
+const textStore = useTextStore();
 
 const feedbackText = ref('');
+const saveTitle = ref('');
+const saving = ref(false);
+
+async function saveTexto() {
+  saving.value = true;
+  const conteudo = textStore.originalText || textStore.tokens.map(t => t.text).join('');
+  const titulo = saveTitle.value.trim() || conteudo.trim().slice(0, 50) || "Sem título";
+  try {
+    const res = await axios.post(
+      `${import.meta.env.VITE_API_BASE}/users/${userStore.user._id}/textos`,
+      { titulo, conteudo },
+      { headers: { Authorization: `Bearer ${userStore.token}` } }
+    );
+    textStore.setSavedId(res.data._id);
+    showFeedback('✅ Texto salvo!');
+    saveTitle.value = '';
+  } catch {
+    showFeedback('Erro ao salvar texto.');
+  } finally {
+    saving.value = false;
+  }
+}
 
 function showFeedback(msg) {
     feedbackText.value = msg;
@@ -188,23 +213,27 @@ onUnmounted(() => {
         </div>
 
         <div class="group" v-if="userStore.isLoggedIn()">
-            <h4>💾 Config</h4>
-
-            <div class="persist-buttons">
-                <button @click="handleSave" :disabled="preferencesStore.saving" class="btn-persist">
-                    {{ preferencesStore.saving ? 'Salvando...' : '💾 Salvar' }}
-                </button>
-                <button @click="handleReload" :disabled="preferencesStore.loading" class="btn-persist">
-                    {{ preferencesStore.loading ? 'Carregando...' : '🔄 Recarregar' }}
+            <h4>📚 Texto</h4>
+            <div v-if="!textStore.savedId" class="save-text-area">
+                <input v-model="saveTitle" placeholder="Título (opcional)" class="title-input" />
+                <button @click="saveTexto" :disabled="saving" class="btn-persist">
+                    {{ saving ? 'Salvando...' : '💾 Salvar texto' }}
                 </button>
             </div>
+            <p v-else class="saved-msg">✅ Texto salvo</p>
         </div>
 
         <div class="group">
-            <h4>↺ Config</h4>
+            <h4>💾 Config</h4>
 
             <div class="persist-buttons">
-                <button @click="handleReset" class="btn-persist">↺ Resetar</button>
+                <button v-if="userStore.isLoggedIn()" @click="handleSave" :disabled="preferencesStore.saving" class="btn-persist">
+                    {{ preferencesStore.saving ? 'Salvando...' : '💾 Salvar configuração' }}
+                </button>
+                <button v-if="userStore.isLoggedIn()" @click="handleReload" :disabled="preferencesStore.loading" class="btn-persist">
+                    {{ preferencesStore.loading ? 'Carregando...' : '🔄 Recarregar' }}
+                </button>
+                <button @click="handleReset" class="btn-persist">↺ Configuração padrão</button>
             </div>
         </div>
 
@@ -477,5 +506,25 @@ input[type="range"] {
     border-radius: 6px;
     background-color: rgba(255, 255, 255, 0.15);
     margin-bottom: 12px;
+}
+
+.save-text-area {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.title-input {
+    width: 100%;
+    padding: 8px 10px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.saved-msg {
+    font-size: 14px;
+    margin: 0;
 }
 </style>

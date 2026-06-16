@@ -42,6 +42,7 @@ onMounted(() => {
       <div class="auth-buttons">
         <template v-if="userStore.isLoggedIn()">
           <span class="user-name">{{ userStore.user?.nome }}</span>
+          <RouterLink to="/saved" class="btn btn-saved">📚 Meus Textos</RouterLink>
           <button @click="handleLogout" class="btn btn-logout">Sair</button>
         </template>
         <template v-else>
@@ -104,6 +105,17 @@ header {
 }
 
 .btn-login:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.btn-saved {
+  background-color: transparent;
+  color: inherit;
+  border: 1px solid var(--color-text);
+  text-decoration: none;
+}
+
+.btn-saved:hover {
   background-color: rgba(0, 0, 0, 0.05);
 }
 
